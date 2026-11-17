@@ -211,9 +211,8 @@ struct SourceManagementView: View {
                 HStack {
                     Text("已选择 \(selectedItemCount) 项")
                         .font(.subheadline.weight(.semibold))
-                        .animation(TowerMotion.selection(reduceMotion: reduceMotion)) { content in
-                            content.contentTransition(reduceMotion ? .opacity : .numericText())
-                        }
+                        .contentTransition(reduceMotion ? .opacity : .numericText())
+                        .animation(TowerMotion.selection(reduceMotion: reduceMotion), value: selectedItemCount)
 
                     Spacer()
 
@@ -277,7 +276,7 @@ struct SourceManagementView: View {
     }
 
     private func managementEmptyState(title: LocalizedStringKey, symbol: String) -> some View {
-        ContentUnavailableView(title, systemImage: symbol)
+        TowerUnavailableView(title, systemImage: symbol)
             .listRowBackground(Color.clear)
     }
 

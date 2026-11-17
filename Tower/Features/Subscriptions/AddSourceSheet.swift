@@ -141,7 +141,7 @@ struct AddSourceSheet: View {
                 saveTask?.cancel()
                 cancelClipboardRead()
             }
-            .onChange(of: sourceValue) {
+            .towerOnChange(of: sourceValue) {
                 cancelClipboardRead()
                 errorMessage = nil
             }
@@ -158,7 +158,7 @@ struct AddSourceSheet: View {
                 detectedKind = kind
                 detectedValue = value
             }
-            .onChange(of: entryMode) {
+            .towerOnChange(of: entryMode) {
                 cancelClipboardRead()
                 focusedField = nil
                 errorMessage = nil

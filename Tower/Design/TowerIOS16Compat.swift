@@ -7,7 +7,63 @@ enum TowerHaptic {
     case success
 }
 
+struct TowerUnavailableView: View {
+    let title: LocalizedStringKey
+    let systemImage: String
+    let description: Text?
+
+    init(_ title: LocalizedStringKey, systemImage: String, description: Text? = nil) {
+        self.title = title
+        self.systemImage = systemImage
+        self.description = description
+    }
+
+    var body: some View {
+        VStack(spacing: 10) {
+            Image(systemName: systemImage)
+                .font(.system(size: 32))
+                .foregroundStyle(.secondary)
+            Text(title)
+                .font(.headline)
+            if let description {
+                description
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+    }
+}
+
 extension View {
+    @ViewBuilder
+    func towerGeometryGroup() -> some View {
+        if #available(iOS 17.0, *) {
+            self.geometryGroup()
+        } else {
+            self
+        }
+    }
+
+    @ViewBuilder
+    func towerMenuActionDismissBehavior(keepOpen: Bool) -> some View {
+        if #available(iOS 16.4, *) {
+            self.menuActionDismissBehavior(keepOpen ? .disabled : .enabled)
+        } else {
+            self
+        }
+    }
+
+    func towerOnChange<Value: Equatable>(
+        of value: Value,
+        _ action: @escaping () -> Void
+    ) -> some View {
+        onChange(of: value) { _ in action() }
+    }
+
+
     @ViewBuilder
     func towerSensoryFeedback<Value: Equatable>(_ feedback: TowerHaptic, trigger: Value) -> some View {
         if #available(iOS 17.0, *) {

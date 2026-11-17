@@ -49,15 +49,18 @@ struct QRCodeScannerPreview: View {
                     .id(generation)
                     .frame(minHeight: 250)
             } else {
-                ContentUnavailableView {
-                    Label("无法使用相机扫码", systemImage: "camera.fill")
-                } description: {
-                    Text(failure ?? String(localized: "请检查相机权限，或切换到粘贴识别。"))
-                } actions: {
-                    Button("重试") { retry() }
-                    Button("打开设置") {
-                        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-                        UIApplication.shared.open(url)
+                VStack(spacing: 12) {
+                    TowerUnavailableView(
+                        "无法使用相机扫码",
+                        systemImage: "camera.fill",
+                        description: Text(failure ?? String(localized: "请检查相机权限，或切换到粘贴识别。"))
+                    )
+                    HStack {
+                        Button("重试") { retry() }
+                        Button("打开设置") {
+                            guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                            UIApplication.shared.open(url)
+                        }
                     }
                 }
                 .frame(minHeight: 250)

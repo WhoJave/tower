@@ -346,7 +346,7 @@ struct NodeMapOverview<Header: View>: View, Equatable {
                 withAnimation(TowerMotion.disclosure(reduceMotion: reduceMotion)) { selectedRegionCode = nil }
             }
         } else if !TowerPlatform.isMac && canShowUnavailable && clusters.isEmpty && !nodes.isEmpty {
-            ContentUnavailableView(
+            TowerUnavailableView(
                 "还不能定位节点",
                 systemImage: "mappin.slash",
                 description: Text("优先使用手动地区和节点名称；未标注时查询离线 IP 国家库。")
@@ -666,7 +666,7 @@ struct ExpandableNodeRow: View {
             usesInsetBackground ? Color.primary.opacity(0.045) : Color.clear,
             in: RoundedRectangle(cornerRadius: 14, style: .continuous)
         )
-        .geometryGroup()
+        .towerGeometryGroup()
         .clipped()
         .task(id: "\(node.server)|\(isExpanded)") {
             if isExpanded { await model.resolveNetworkDetails(for: node) }
