@@ -133,3 +133,21 @@ private struct TowerChangeObserver<Value: Equatable>: ViewModifier {
             }
     }
 }
+
+@MainActor
+func towerWithAnimation(
+    _ animation: Animation?,
+    completionDelay: Duration = .milliseconds(450),
+    _ updates: () -> Void,
+    completion: @escaping @MainActor () -> Void
+) {
+    if #available(iOS 17.0, *) {
+        withAnimation(animation, completionCriteria: .removed, updates, completion: completion)
+    } else {
+        withAnimation(animation, updates)
+        Task { @MainActor in
+            try? await Task.sleep(for: completionDelay)
+            completion()
+        }
+    }
+}

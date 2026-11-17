@@ -1136,7 +1136,7 @@ private struct WelcomeExportExample: View {
         .coordinateSpace(.named(Self.space))
         .overlay { flight }
         .towerSensoryFeedback(.selection, trigger: client)
-        .onChange(of: client) { deliveries += 1 }
+        .towerOnChange(of: client) { deliveries += 1 }
         .task(id: isActive) {
             // Hand the first configuration over once the page has settled.
             guard isActive else { return }

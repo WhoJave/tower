@@ -177,8 +177,8 @@ struct ImportRuleSchemeSheet: View {
                 clearImportError()
                 focusedField = value == .link ? .url : value == .text ? .text : nil
             }
-            .onChange(of: urlString) { clearImportError() }
-            .onChange(of: configurationText) { clearImportError() }
+            .towerOnChange(of: urlString) { clearImportError() }
+            .towerOnChange(of: configurationText) { clearImportError() }
         }
         .disabled(showsTaskOverlay)
         .accessibilityHidden(showsTaskOverlay)

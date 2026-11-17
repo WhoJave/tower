@@ -140,8 +140,13 @@ struct SubscriptionsView: View {
                 AddSourceSheet(editingNode: node)
             }
             .subscriptionRefreshReport()
-            .navigationDestination(item: $sourceManagementRoute) { route in
-                SourceManagementView(initialRoute: route)
+            .navigationDestination(isPresented: Binding(
+                get: { sourceManagementRoute != nil },
+                set: { if !$0 { sourceManagementRoute = nil } }
+            )) {
+                if let route = sourceManagementRoute {
+                    SourceManagementView(initialRoute: route)
+                }
             }
             .alert(
                 pendingDeletion?.title ?? String(localized: "确认删除"),
@@ -740,7 +745,7 @@ private struct SubscriptionCard: View {
             // expanded list without making that list part of the menu snapshot.
             .background(Color(uiColor: .secondarySystemGroupedBackground),
                         in: RoundedRectangle(cornerRadius: TowerTheme.cornerRadius, style: .continuous))
-            .geometryGroup()
+            .towerGeometryGroup()
             .contentShape(.contextMenuPreview, RoundedRectangle(cornerRadius: TowerTheme.cornerRadius, style: .continuous))
             .contextMenu {
                 Button(action: onEdit) { Label("编辑", systemImage: "pencil") }
@@ -798,7 +803,7 @@ private struct SubscriptionCard: View {
         // A map region's node list can move this whole card by a large amount.
         // Keep text and the progress bar in the same animated
         // coordinate space, instead of independently interpolating their origins.
-        .geometryGroup()
+        .towerGeometryGroup()
         .clipped()
         .towerSensoryFeedback(.selection, trigger: isExpanded)
         .sheet(item: $sharePayload) { payload in
@@ -991,7 +996,7 @@ private struct LocalNodeCard: View {
                           onDelete: onDelete)
             .padding(5)
             .towerCard()
-            .geometryGroup()
+            .towerGeometryGroup()
             .contentShape(.contextMenuPreview, RoundedRectangle(cornerRadius: TowerTheme.cornerRadius, style: .continuous))
             .contextMenu {
                 Button(action: onEdit) { Label("编辑", systemImage: "pencil") }
