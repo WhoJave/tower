@@ -1,0 +1,72 @@
+name: Tower iOS 16 Build
+
+on:
+  push:
+    branches:
+      - ios16-compat
+    paths:
+      - 'Tower/**'
+      - 'Tower.xcodeproj/**'
+      - '.github/workflows/ios16-build.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Compile for iPhone (iOS 16 minimum)
+    runs-on: macos-26
+    timeout-minutes: 45
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Verify Xcode and deployment target
+        run: |
+          xcodebuild -version
+          xcodebuild -showsdks
+          grep 'IPHONEOS_DEPLOYMENT_TARGET = 16.0' Tower.xcodeproj/project.pbxproj
+          xcodebuild -list -project Tower.xcodeproj
+
+      - name: Build unsigned iPhone app
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project Tower.xcodeproj \
+            -scheme Tower \
+            -configuration Debug \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$RUNNER_TEMP/TowerDerivedData" \
+            CODE_SIGNING_ALLOWED=NO \
+            build 2>&1 | tee "$RUNNER_TEMP/tower-build.log"
+
+      - name: Package compiled app (unsigned, not directly installable)
+        if: success()
+        run: |
+          APP="$RUNNER_TEMP/TowerDerivedData/Build/Products/Debug-iphoneos/Tower.app"
+          test -d "$APP"
+          /usr/libexec/PlistBuddy -c 'Print :MinimumOSVersion' "$APP/Info.plist"
+          ditto -c -k --sequesterRsrc --keepParent "$APP" "$RUNNER_TEMP/Tower-iOS16-unsigned-app.zip"
+
+      - name: Upload unsigned build
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tower-iOS16-unsigned-app
+          path: ${{ runner.temp }}/Tower-iOS16-unsigned-app.zip
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tower-iOS16-build-log
+          path: ${{ runner.temp }}/tower-build.log
+          if-no-files-found: ignore
+          retention-days: 7
