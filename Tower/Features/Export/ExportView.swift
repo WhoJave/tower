@@ -308,8 +308,8 @@ struct ExportView: View {
     private var protocolSelectionSummary: String {
         let kinds = model.filterableKinds(for: model.selectedTarget)
         let selected = kinds.filter { !model.isExcluded($0.kind, for: model.selectedTarget) }
-        if selected.isEmpty { return String(localized: "未选择协议") }
-        if selected.count == kinds.count { return String(localized: "全部协议") }
+        if selected.isEmpty { return String(localized: "未选择协议", locale: AppLocalization.locale) }
+        if selected.count == kinds.count { return String(localized: "全部协议", locale: AppLocalization.locale) }
         return selected.map { $0.kind.title }.joined(separator: " · ")
     }
 
@@ -319,7 +319,7 @@ struct ExportView: View {
         let kinds = model.filterableKinds(for: model.selectedTarget)
         let selected = kinds.filter { !model.isExcluded($0.kind, for: model.selectedTarget) }
         guard !selected.isEmpty, selected.count < kinds.count else { return nil }
-        return String(localized: "已选 \(selected.count)/\(kinds.count) 种")
+        return String(localized: "已选 \(selected.count)/\(kinds.count) 种", locale: AppLocalization.locale)
     }
 
     private var selectedDestinationID: String {
@@ -342,7 +342,7 @@ struct ExportView: View {
                 sharePayload = ExportPayload(url: try model.makeExportURL(configuration: configuration))
             }
         } catch {
-            model.showToast(String(localized: "生成失败：\(error.localizedDescription)"), symbol: "exclamationmark.triangle.fill")
+            model.showToast(String(localized: "生成失败：\(error.localizedDescription)", locale: AppLocalization.locale), symbol: "exclamationmark.triangle.fill")
         }
     }
 
@@ -359,7 +359,7 @@ struct ExportView: View {
         if !model.isLANSharingActive { await model.startLANSharing() }
         guard let url = model.lanSubscriptionURL(target: target, contentMode: contentMode) else { return }
         UIPasteboard.general.string = url.absoluteString
-        model.showToast(String(localized: "局域网订阅链接已复制"), symbol: "doc.on.doc.fill")
+        model.showToast(String(localized: "局域网订阅链接已复制", locale: AppLocalization.locale), symbol: "doc.on.doc.fill")
     }
 
     @MainActor
@@ -371,7 +371,7 @@ struct ExportView: View {
             do {
                 let url = try await directImportService.prepareNodeSubscriptionURL(configuration)
                 UIPasteboard.general.string = url.absoluteString
-                model.showToast(String(localized: "订阅链接已复制"), symbol: "doc.on.doc.fill")
+                model.showToast(String(localized: "订阅链接已复制", locale: AppLocalization.locale), symbol: "doc.on.doc.fill")
             } catch {
                 directImportService.stop()
                 model.showToast(error.localizedDescription, symbol: "exclamationmark.triangle.fill")
@@ -404,11 +404,11 @@ struct ExportView: View {
 
             if didOpen {
                 UINotificationFeedbackGenerator().notificationOccurred(.success)
-                model.showToast(String(localized: "已交给 \(configuration.target.name) 导入"), symbol: "arrow.up.forward.app.fill")
+                model.showToast(String(localized: "已交给 \(configuration.target.name) 导入", locale: AppLocalization.locale), symbol: "arrow.up.forward.app.fill")
             } else {
                 directImportService.stop()
                 if !TowerPlatform.isMac {
-                    model.showToast(String(localized: "未找到 \(configuration.target.name)，请从分享列表选择"), symbol: "exclamationmark.circle.fill")
+                    model.showToast(String(localized: "未找到 \(configuration.target.name)，请从分享列表选择", locale: AppLocalization.locale), symbol: "exclamationmark.circle.fill")
                 }
                 if TowerPlatform.isMac, configuration.target == .surgeMac {
                     surgeSchemeAvailable = false
@@ -426,7 +426,7 @@ struct ExportView: View {
 
     private func copy(_ configuration: GeneratedConfiguration) {
         UIPasteboard.general.string = configuration.content
-        model.showToast(String(localized: "配置已复制"), symbol: "doc.on.doc.fill")
+        model.showToast(String(localized: "配置已复制", locale: AppLocalization.locale), symbol: "doc.on.doc.fill")
     }
 }
 
@@ -1254,7 +1254,7 @@ private struct ProtocolFilter: View {
         let kinds = model.filterableKinds(for: model.selectedTarget)
         if ProtocolFilterPolicy.isVisible(compatibleKindCount: kinds.count) {
             VStack(alignment: .leading, spacing: 12) {
-                SectionHeading(title: "协议筛选", detail: String(localized: "只影响 \(model.selectedTarget.name)"))
+                SectionHeading(title: "协议筛选", detail: String(localized: "只影响 \(model.selectedTarget.name)", locale: AppLocalization.locale))
                 VStack(spacing: 0) {
                     ForEach(Array(kinds.enumerated()), id: \.element.kind) { index, entry in
                         if index > 0 { Divider().padding(.leading, 66) }
@@ -1278,8 +1278,8 @@ private struct ProtocolFilter: View {
                 }
                 .towerCard()
                 Text(model.embeddedRemoteSubscriptions(for: model.selectedTarget).isEmpty
-                     ? String(localized: "关掉的协议不会写进 \(model.selectedTarget.name) 的配置，并计入“已跳过”。其他客户端不受影响。")
-                     : String(localized: "仅筛选本地节点；代理集合中的节点由客户端获取，不受此处筛选影响。"))
+                     ? String(localized: "关掉的协议不会写进 \(model.selectedTarget.name) 的配置，并计入“已跳过”。其他客户端不受影响。", locale: AppLocalization.locale)
+                     : String(localized: "仅筛选本地节点；代理集合中的节点由客户端获取，不受此处筛选影响。", locale: AppLocalization.locale))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -1528,7 +1528,7 @@ private struct ConfigurationPreviewSheet: View {
                 ToolbarItem(placement: .primaryAction) {
                     Button("复制", systemImage: "doc.on.doc") {
                         UIPasteboard.general.string = configuration.content
-                        model.showToast(String(localized: "配置已复制"), symbol: "doc.on.doc.fill")
+                        model.showToast(String(localized: "配置已复制", locale: AppLocalization.locale), symbol: "doc.on.doc.fill")
                     }
                     .accessibilityIdentifier("preview-copy")
                 }
@@ -1574,10 +1574,10 @@ private struct ImportPrivacyNote: View {
         guard target.supportsDirectImport(mode: contentMode) else { return baseDetail }
         switch target {
         case .egern:
-            return baseDetail + String(localized: "如果 Egern 刚启动后没有出现新配置，回到塔台再点一次。")
+            return baseDetail + String(localized: "如果 Egern 刚启动后没有出现新配置，回到塔台再点一次。", locale: AppLocalization.locale)
         case .karing:
             // Karing skips a link it already has, so each import is a new profile.
-            return baseDetail + String(localized: "Karing 每次导入都会新建一份以导出时间命名的配置，旧的塔台配置可以删除。")
+            return baseDetail + String(localized: "Karing 每次导入都会新建一份以导出时间命名的配置，旧的塔台配置可以删除。", locale: AppLocalization.locale)
         default:
             return baseDetail
         }
@@ -1586,32 +1586,32 @@ private struct ImportPrivacyNote: View {
     private var baseDetail: String {
         if target.copiesAggregatedSubscription(mode: contentMode) {
             if target.usesClashFormat {
-                return String(localized: "将链接添加到现有配置的代理集合（proxy-providers），不含规则或策略组。刷新时需保持塔台运行；链接失效后请重新复制。")
+                return String(localized: "将链接添加到现有配置的代理集合（proxy-providers），不含规则或策略组。刷新时需保持塔台运行；链接失效后请重新复制。", locale: AppLocalization.locale)
             }
             if TowerPlatform.isMac {
-                return String(localized: "复制后，在 Surge 的“策略 → 策略组”中新建或编辑策略组，勾选“同时包含外部策略”，将链接粘贴到“URL 或本地路径”（policy-path）。链接聚合已启用且通过筛选的节点，刷新时保持塔台运行；可在“局域网共享”中停止服务。WireGuard 请使用完整配置导出。")
+                return String(localized: "复制后，在 Surge 的“策略 → 策略组”中新建或编辑策略组，勾选“同时包含外部策略”，将链接粘贴到“URL 或本地路径”（policy-path）。链接聚合已启用且通过筛选的节点，刷新时保持塔台运行；可在“局域网共享”中停止服务。WireGuard 请使用完整配置导出。", locale: AppLocalization.locale)
             }
-            return String(localized: "复制后，请在 3 分钟内切换到 Surge，在策略组的外部策略（policy-path）中粘贴链接。只聚合已启用且通过筛选的节点，不替换规则。链接仅在本机临时有效；更新节点时回到塔台重新复制，再在 Surge 中刷新。WireGuard 请使用完整配置导出。")
+            return String(localized: "复制后，请在 3 分钟内切换到 Surge，在策略组的外部策略（policy-path）中粘贴链接。只聚合已启用且通过筛选的节点，不替换规则。链接仅在本机临时有效；更新节点时回到塔台重新复制，再在 Surge 中刷新。WireGuard 请使用完整配置导出。", locale: AppLocalization.locale)
         }
         if copiesSubscription {
             if target == .surgeMac {
-                return String(localized: "点击“复制订阅”，打开 Surge Mac，在“更多 → 配置 → 从 URL 安装配置”中粘贴链接并安装，然后选择该配置使用。更新订阅时请保持塔台运行；可在塔台的“局域网共享”中停止服务。")
+                return String(localized: "点击“复制订阅”，打开 Surge Mac，在“更多 → 配置 → 从 URL 安装配置”中粘贴链接并安装，然后选择该配置使用。更新订阅时请保持塔台运行；可在塔台的“局域网共享”中停止服务。", locale: AppLocalization.locale)
             }
-            return String(localized: "点击“复制订阅”，打开 ClashMac 的“配置”页面，点击右上角“＋ → 导入订阅”，粘贴链接、填写名称并点击“完成”。下载后选择该配置使用。更新订阅时请保持塔台运行；可在塔台的“局域网共享”中停止服务。")
+            return String(localized: "点击“复制订阅”，打开 ClashMac 的“配置”页面，点击右上角“＋ → 导入订阅”，粘贴链接、填写名称并点击“完成”。下载后选择该配置使用。更新订阅时请保持塔台运行；可在塔台的“局域网共享”中停止服务。", locale: AppLocalization.locale)
         }
         if contentMode == .nodesOnly {
-            return String(localized: "塔台只会把节点订阅交给 \(target.name)，不会替换客户端现有的规则和策略组。订阅保留在这台 iPhone 的临时地址，不会上传。")
+            return String(localized: "塔台只会把节点订阅交给 \(target.name)，不会替换客户端现有的规则和策略组。订阅保留在这台 iPhone 的临时地址，不会上传。", locale: AppLocalization.locale)
         }
         if embedsRemoteSubscriptions {
-            return String(localized: "生成的配置包含原始订阅链接，\(target.name) 可直接刷新远程节点。请只交给可信客户端；塔台规则与自有节点变化后仍需重新导出。")
+            return String(localized: "生成的配置包含原始订阅链接，\(target.name) 可直接刷新远程节点。请只交给可信客户端；塔台规则与自有节点变化后仍需重新导出。", locale: AppLocalization.locale)
         }
         if target.supportsDirectConfigurationImport {
-            return String(localized: "塔台会通过 \(target.name) 的 URL Scheme 打开客户端。配置只在本机的 127.0.0.1 临时地址保留 3 分钟，不会上传；需要更新时回到塔台再次导入。")
+            return String(localized: "塔台会通过 \(target.name) 的 URL Scheme 打开客户端。配置只在本机的 127.0.0.1 临时地址保留 3 分钟，不会上传；需要更新时回到塔台再次导入。", locale: AppLocalization.locale)
         }
         if target == .clashMac {
-            return String(localized: "导出 YAML 文件后，在 ClashMac 的配置文件页面导入；也可以添加局域网订阅链接。")
+            return String(localized: "导出 YAML 文件后，在 ClashMac 的配置文件页面导入；也可以添加局域网订阅链接。", locale: AppLocalization.locale)
         }
-        return String(localized: "Quantumult X 目前没有公开完整配置导入的 URL Scheme。点击下方按钮会立即打开系统文件分享，不上传您的订阅，也不会用不完整的远程资源替代本地规则。")
+        return String(localized: "Quantumult X 目前没有公开完整配置导入的 URL Scheme。点击下方按钮会立即打开系统文件分享，不上传您的订阅，也不会用不完整的远程资源替代本地规则。", locale: AppLocalization.locale)
     }
 }
 
@@ -1692,12 +1692,12 @@ private struct ImportActionBar: View {
 
     private var importTitle: String {
         if target.copiesAggregatedSubscription(mode: contentMode) {
-            return String(localized: "复制聚合的订阅链接")
+            return String(localized: "复制聚合的订阅链接", locale: AppLocalization.locale)
         }
-        if copiesSubscription { return String(localized: "复制订阅") }
+        if copiesSubscription { return String(localized: "复制订阅", locale: AppLocalization.locale) }
         switch contentMode {
         case .nodesOnly:
-            return String(localized: "仅导出节点到 \(target.name)")
+            return String(localized: "仅导出节点到 \(target.name)", locale: AppLocalization.locale)
         case .fullConfiguration:
             return target.primaryImportTitle
         }

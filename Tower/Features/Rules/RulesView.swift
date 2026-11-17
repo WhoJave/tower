@@ -61,7 +61,7 @@ struct RulesView: View {
             ImportedRuleSchemeEditor(scheme: scheme)
         }
         .alert(
-            pendingDeletion.map { String(localized: "删除“\($0.name)”？") } ?? String(localized: "确认删除"),
+            pendingDeletion.map { String(localized: "删除“\($0.name)”？", locale: AppLocalization.locale) } ?? String(localized: "确认删除", locale: AppLocalization.locale),
             isPresented: Binding(
                 get: { pendingDeletion != nil },
                 set: { if !$0 { pendingDeletion = nil } }
@@ -83,7 +83,7 @@ struct RulesView: View {
     private var builtInSection: some View {
         let schemes = model.ruleSchemes.filter(\.isBundled)
         return Group {
-            SectionHeading(title: "本机规则", detail: String(localized: "安装后离线可用"))
+            SectionHeading(title: "本机规则", detail: String(localized: "安装后离线可用", locale: AppLocalization.locale))
             Label("点击规则方案即可修改规则", systemImage: "hand.tap")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
@@ -141,7 +141,7 @@ struct RulesView: View {
             !$0.isBundled && !SelfConfigurationSource.matches($0)
         }
         Group {
-            SectionHeading(title: "已导入", detail: String(localized: "\(schemes.count) 个方案"))
+            SectionHeading(title: "已导入", detail: String(localized: "\(schemes.count) 个方案", locale: AppLocalization.locale))
             if schemes.isEmpty {
                 Text("还没有导入规则，使用右上角按钮添加。")
                     .font(.subheadline)
@@ -371,7 +371,7 @@ private struct RuleSchemeCard: View {
                 Divider()
 
                 HStack(spacing: 0) {
-                    RuleDisclosureRow(title: String(localized: "查看策略组"), isExpanded: isExpanded) {
+                    RuleDisclosureRow(title: String(localized: "查看策略组", locale: AppLocalization.locale), isExpanded: isExpanded) {
                         withAnimation(TowerMotion.disclosure(reduceMotion: reduceMotion)) { isExpanded.toggle() }
                     }
                     .accessibilityIdentifier("scheme-detail-\(scheme.id)")
@@ -425,18 +425,18 @@ private struct RuleSchemeCard: View {
                     }
                     Divider()
                     RuleDetailLine(
-                        title: String(localized: "规则列表"),
-                        detail: String(localized: "\(previewScheme.remoteRulesetURLs.count) 个")
+                        title: String(localized: "规则列表", locale: AppLocalization.locale),
+                        detail: String(localized: "\(previewScheme.remoteRulesetURLs.count) 个", locale: AppLocalization.locale)
                     )
                     if let updatedAt = scheme.updatedAt {
                         RuleDetailLine(
-                            title: String(localized: "更新时间"),
+                            title: String(localized: "更新时间", locale: AppLocalization.locale),
                             detail: updatedAt.formatted(date: .abbreviated, time: .shortened)
                         )
                     }
                     Text(scheme.isBundled
-                        ? String(localized: "这份方案随 App 打包，完全离线可用。")
-                        : String(localized: "规则列表已下载到本机，生成配置时不再联网。"))
+                        ? String(localized: "这份方案随 App 打包，完全离线可用。", locale: AppLocalization.locale)
+                        : String(localized: "规则列表已下载到本机，生成配置时不再联网。", locale: AppLocalization.locale))
                     .font(.caption)
                     .foregroundStyle(.tertiary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -467,8 +467,8 @@ private struct RuleSchemeCard: View {
         }.count
         let patterns = group.members.count - references
         var parts = [kind]
-        if references > 0 { parts.append(String(localized: "\(references) 个引用")) }
-        if patterns > 0 { parts.append(String(localized: "\(patterns) 组节点匹配")) }
+        if references > 0 { parts.append(String(localized: "\(references) 个引用", locale: AppLocalization.locale)) }
+        if patterns > 0 { parts.append(String(localized: "\(patterns) 组节点匹配", locale: AppLocalization.locale)) }
         return parts.joined(separator: " · ")
     }
 }
@@ -546,33 +546,33 @@ private enum RuleCustomizationDeletion {
     var title: String {
         switch self {
         case .catalog(let flow):
-            String(localized: "删除“\(flow.name)”？")
+            String(localized: "删除“\(flow.name)”？", locale: AppLocalization.locale)
         case .localRuleSet(let ruleSet):
-            String(localized: "删除“\(ruleSet.name)”？")
+            String(localized: "删除“\(ruleSet.name)”？", locale: AppLocalization.locale)
         case .group(let request):
-            String(localized: "删除“\(request.group.name)”？")
+            String(localized: "删除“\(request.group.name)”？", locale: AppLocalization.locale)
         }
     }
 
     var actionTitle: String {
         switch self {
-        case .localRuleSet: String(localized: "删除本地规则集")
-        case .catalog, .group: String(localized: "删除")
+        case .localRuleSet: String(localized: "删除本地规则集", locale: AppLocalization.locale)
+        case .catalog, .group: String(localized: "删除", locale: AppLocalization.locale)
         }
     }
 
     var message: String {
         switch self {
         case .catalog:
-            String(localized: "只移除塔台保存的这项自定义，不会修改上游仓库。")
+            String(localized: "只移除塔台保存的这项自定义，不会修改上游仓库。", locale: AppLocalization.locale)
         case .localRuleSet:
-            String(localized: "这会删除本机保存的规则内容，并从所有当前方案中移除；不会修改上游仓库。")
+            String(localized: "这会删除本机保存的规则内容，并从所有当前方案中移除；不会修改上游仓库。", locale: AppLocalization.locale)
         case .group(let request) where !request.references.isEmpty:
             String(
                 localized: "以下分组正在引用它：\(request.references.joined(separator: "、"))。继续删除后会同时移除这些引用；没有候选项的分组会回退到 DIRECT。"
             )
         case .group:
-            String(localized: "这会移除该分组以及指向它的规则，不会修改上游仓库。")
+            String(localized: "这会移除该分组以及指向它的规则，不会修改上游仓库。", locale: AppLocalization.locale)
         }
     }
 }
@@ -590,11 +590,11 @@ private struct ReorderNotice {
             let to = RulePolicyPresentation.nameWithoutLeadingEmoji(conflict.to)
             // Shortest first: youtube.com says more than youtubei.googleapis.com.
             let examples = conflict.domains.sorted { $0.count < $1.count }.prefix(2).joined(separator: "、")
-            return String(localized: "「\(from)」中 \(conflict.domains.count) 个域名改走「\(to)」，如 \(examples)")
+            return String(localized: "「\(from)」中 \(conflict.domains.count) 个域名改走「\(to)」，如 \(examples)", locale: AppLocalization.locale)
         }
         if conflicts.count > 3 { lines.append("…") }
         lines.append("")
-        lines.append(String(localized: "规则从上到下匹配，同一个域名只会命中排在前面的组。"))
+        lines.append(String(localized: "规则从上到下匹配，同一个域名只会命中排在前面的组。", locale: AppLocalization.locale))
         return lines.joined(separator: "\n")
     }
 }
@@ -784,7 +784,7 @@ private struct RuleCustomizationSheet: View {
                 Text("这会移除当前方案后来添加的规则、改名和 Emoji 设置；“我的规则集”中的本地内容会保留。")
             }
             .alert(
-                pendingDeletion?.title ?? String(localized: "确认删除"),
+                pendingDeletion?.title ?? String(localized: "确认删除", locale: AppLocalization.locale),
                 isPresented: Binding(
                     get: { pendingDeletion != nil },
                     set: { if !$0 { pendingDeletion = nil } }
@@ -878,7 +878,7 @@ private struct RuleCustomizationSheet: View {
     private var categoryPicker: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                categoryButton(nil, title: String(localized: "全部"))
+                categoryButton(nil, title: String(localized: "全部", locale: AppLocalization.locale))
                 ForEach(RuleCatalogCategory.allCases, id: \.self) { category in
                     categoryButton(category, title: category.displayName)
                 }
@@ -1074,7 +1074,7 @@ private struct RuleCustomizationSheet: View {
             reorderNotice = ReorderNotice(previousGroups: previous, previousMatching: previousMatching, conflicts: conflicts)
         } else if scattered {
             model.showToast(
-                String(localized: "「\(RulePolicyPresentation.nameWithoutLeadingEmoji(moved))」的规则原本分布在多处，已一起移到这里"),
+                String(localized: "「\(RulePolicyPresentation.nameWithoutLeadingEmoji(moved))」的规则原本分布在多处，已一起移到这里", locale: AppLocalization.locale),
                 symbol: "arrow.up.arrow.down",
                 tone: .neutral
             )
@@ -1150,9 +1150,9 @@ private struct RuleCustomizationSheet: View {
 
     private func localRuleSetSummary(_ ruleSet: LocalRuleSet) -> String {
         if ruleSet.remoteRuleURL != nil {
-            return String(localized: "本地 · 远程规则集")
+            return String(localized: "本地 · 远程规则集", locale: AppLocalization.locale)
         }
-        return String(localized: "本地 · \(ruleSet.normalizedRules.count) 条规则")
+        return String(localized: "本地 · \(ruleSet.normalizedRules.count) 条规则", locale: AppLocalization.locale)
     }
 
     private func requestDeletion(of group: RuleSchemeGroup) {
@@ -1183,15 +1183,15 @@ private struct RuleCustomizationSheet: View {
     /// "→ 节点选择 · 2 个列表 · 我添加 3 条": where it goes and what feeds it.
     private func groupRowDetail(_ group: RuleSchemeGroup) -> String {
         if group.name == finalGroupName {
-            return String(localized: "→ \(groupSelectionSummary(group)) · 其余所有流量")
+            return String(localized: "→ \(groupSelectionSummary(group)) · 其余所有流量", locale: AppLocalization.locale)
         }
         var parts = scheme.groupEditorMode(for: group) == .nodePatternsOnly
-            ? [String(localized: "\(group.kind.displayTitle) · 按节点名称筛选")]
-            : [String(localized: "→ \(groupSelectionSummary(group))")]
+            ? [String(localized: "\(group.kind.displayTitle) · 按节点名称筛选", locale: AppLocalization.locale)]
+            : [String(localized: "→ \(groupSelectionSummary(group))", locale: AppLocalization.locale)]
         let sources = model.ruleSources(forGroup: group.name, in: scheme).count
-        if sources > 0 { parts.append(String(localized: "\(sources) 项规则")) }
+        if sources > 0 { parts.append(String(localized: "\(sources) 项规则", locale: AppLocalization.locale)) }
         let added = model.supplementRules(forGroup: group.name, in: scheme).count
-        if added > 0 { parts.append(String(localized: "我添加 \(added) 条")) }
+        if added > 0 { parts.append(String(localized: "我添加 \(added) 条", locale: AppLocalization.locale)) }
         return parts.joined(separator: " · ")
     }
 
@@ -1212,8 +1212,8 @@ private struct RuleCustomizationSheet: View {
             return name
         }).first {
             switch reference.uppercased() {
-            case "DIRECT": return String(localized: "直连")
-            case "REJECT": return String(localized: "拒绝")
+            case "DIRECT": return String(localized: "直连", locale: AppLocalization.locale)
+            case "REJECT": return String(localized: "拒绝", locale: AppLocalization.locale)
             default: return RulePolicyPresentation.nameWithoutLeadingEmoji(reference)
             }
         }
@@ -1330,9 +1330,9 @@ private struct RuleCustomizationSheet: View {
 
     private func routeTitle(_ entry: RuleCatalogEntry) -> String {
         switch entry.defaultRoute {
-        case .proxy: entry.suggestedPolicyName ?? String(localized: "节点选择")
-        case .direct: String(localized: "直连")
-        case .reject: String(localized: "拒绝")
+        case .proxy: entry.suggestedPolicyName ?? String(localized: "节点选择", locale: AppLocalization.locale)
+        case .direct: String(localized: "直连", locale: AppLocalization.locale)
+        case .reject: String(localized: "拒绝", locale: AppLocalization.locale)
         }
     }
 
@@ -1904,8 +1904,8 @@ struct OrderedPolicyCandidateSections: View {
 
     private func policyTitle(_ policy: String) -> String {
         switch policy.uppercased() {
-        case "DIRECT": String(localized: "直连")
-        case "REJECT": String(localized: "拒绝")
+        case "DIRECT": String(localized: "直连", locale: AppLocalization.locale)
+        case "REJECT": String(localized: "拒绝", locale: AppLocalization.locale)
         default: RulePolicyPresentation.nameWithoutLeadingEmoji(policy)
         }
     }
@@ -1925,7 +1925,7 @@ private struct SaveCustomizedSchemeSheet: View {
         self.model = model
         self.scheme = scheme
         self.onSaved = onSaved
-        initialName = "\(scheme.name) · \(String(localized: "自定义"))"
+        initialName = "\(scheme.name) · \(String(localized: "自定义", locale: AppLocalization.locale))"
         _name = State(initialValue: initialName)
     }
 
@@ -2127,7 +2127,7 @@ private struct LocalRuleSetEditor: View {
     }
 
     private var ruleContentSummary: String {
-        draft.remoteRuleURL == nil ? String(localized: "规则文本") : String(localized: "远程规则集")
+        draft.remoteRuleURL == nil ? String(localized: "规则文本", locale: AppLocalization.locale) : String(localized: "远程规则集", locale: AppLocalization.locale)
     }
 
     private var draft: LocalRuleSet {
@@ -2199,8 +2199,8 @@ private struct LocalRuleSetEditor: View {
                 LocalRuleCompatibilityView(text: rulesText)
             }
             .navigationTitle(existingRuleSet == nil
-                ? String(localized: "新建规则集")
-                : String(localized: "编辑规则集"))
+                ? String(localized: "新建规则集", locale: AppLocalization.locale)
+                : String(localized: "编辑规则集", locale: AppLocalization.locale))
             .navigationBarTitleDisplayMode(.inline)
             .confirmDiscardChanges(hasChanges: name != (existingRuleSet?.name ?? "") || rulesText != (existingRuleSet?.ruleInputText ?? ""), isBusy: isSaving, requested: $requestsDiscard) { saveTask?.cancel() }
             .onDisappear { saveTask?.cancel() }

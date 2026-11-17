@@ -149,7 +149,7 @@ struct SubscriptionsView: View {
                 }
             }
             .alert(
-                pendingDeletion?.title ?? String(localized: "确认删除"),
+                pendingDeletion?.title ?? String(localized: "确认删除", locale: AppLocalization.locale),
                 isPresented: Binding(
                     get: { pendingDeletion != nil },
                     set: { if !$0 { pendingDeletion = nil } }
@@ -208,7 +208,7 @@ struct SubscriptionsView: View {
             // height kept changing near the bottom and the page bounced.
             // 2026-09-07 measurements also showed more hitches with them.
             VStack(spacing: 12) {
-                SectionHeading(title: "订阅", detail: String(localized: "\(model.subscriptions.count) 个来源"))
+                SectionHeading(title: "订阅", detail: String(localized: "\(model.subscriptions.count) 个来源", locale: AppLocalization.locale))
                 // Always the user's own order; enabled sources are not
                 // floated to the top.
                 ForEach(model.subscriptions) { source in
@@ -231,7 +231,7 @@ struct SubscriptionsView: View {
     @ViewBuilder
     private var localNodesSection: some View {
         if !model.localNodes.isEmpty {
-            SectionHeading(title: "自有节点", detail: String(localized: "\(model.localNodes.count) 个"))
+            SectionHeading(title: "自有节点", detail: String(localized: "\(model.localNodes.count) 个", locale: AppLocalization.locale))
                 .id(SubscriptionScrollTarget.localNodes)
                 .accessibilityIdentifier("local-nodes-section")
             ForEach(model.localNodes) { node in
@@ -397,15 +397,15 @@ private enum PendingDeletion {
 
     var title: String {
         switch self {
-        case .subscription(let source): String(localized: "删除“\(source.name)”？")
-        case .node(let node): String(localized: "删除“\(NodeRegionResolver.displayName(for: node))”？")
+        case .subscription(let source): String(localized: "删除“\(source.name)”？", locale: AppLocalization.locale)
+        case .node(let node): String(localized: "删除“\(NodeRegionResolver.displayName(for: node))”？", locale: AppLocalization.locale)
         }
     }
 
     var message: String {
         switch self {
-        case .subscription: String(localized: "该订阅及已读取的节点会从这台设备移除。")
-        case .node: String(localized: "这个自有节点会从这台设备移除。")
+        case .subscription: String(localized: "该订阅及已读取的节点会从这台设备移除。", locale: AppLocalization.locale)
+        case .node: String(localized: "这个自有节点会从这台设备移除。", locale: AppLocalization.locale)
         }
     }
 }
@@ -706,8 +706,8 @@ private struct SubscriptionCard: View {
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel(isExpanded
-                        ? String(localized: "收起 \(source.name) 的节点")
-                        : String(localized: "展开 \(source.name) 的节点"))
+                        ? String(localized: "收起 \(source.name) 的节点", locale: AppLocalization.locale)
+                        : String(localized: "展开 \(source.name) 的节点", locale: AppLocalization.locale))
 
                     Toggle(
                         "启用 \(source.name)",
@@ -865,7 +865,7 @@ private struct SubscriptionTrafficBar: View {
 
     private var accessibilityTrafficValue: String {
         guard let formattedTotal else { return formattedRemaining }
-        return "\(formattedRemaining), \(String(localized: "总流量")) \(formattedTotal)"
+        return "\(formattedRemaining), \(String(localized: "总流量", locale: AppLocalization.locale)) \(formattedTotal)"
     }
 
     var body: some View {

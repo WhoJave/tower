@@ -854,20 +854,20 @@ enum RuleSchemeDNSProtectionMode: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .followScheme: String(localized: "跟随方案")
-        case .standard: String(localized: "标准保护")
-        case .strict: String(localized: "严格保护")
+        case .followScheme: String(localized: "跟随方案", locale: AppLocalization.locale)
+        case .standard: String(localized: "标准保护", locale: AppLocalization.locale)
+        case .strict: String(localized: "严格保护", locale: AppLocalization.locale)
         }
     }
 
     var summary: String {
         switch self {
         case .followScheme:
-            String(localized: "只使用当前方案的 DNS，不额外启用 Fake-IP 或 DNS 接管。Clash 系客户端会先在本机解析每个域名。")
+            String(localized: "只使用当前方案的 DNS，不额外启用 Fake-IP 或 DNS 接管。Clash 系客户端会先在本机解析每个域名。", locale: AppLocalization.locale)
         case .standard:
-            String(localized: "国内和直连域名用国内 DNS，其余域名交给代理或经代理的远程 DNS，不会发给国内 DNS。")
+            String(localized: "国内和直连域名用国内 DNS，其余域名交给代理或经代理的远程 DNS，不会发给国内 DNS。", locale: AppLocalization.locale)
         case .strict:
-            String(localized: "在支持的客户端中所有域名都经代理解析，并接管传统 DNS、启用严格路由。")
+            String(localized: "在支持的客户端中所有域名都经代理解析，并接管传统 DNS、启用严格路由。", locale: AppLocalization.locale)
         }
     }
 }
@@ -902,11 +902,11 @@ enum RuleSchemeLatencyTestPreset: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .google: String(localized: "Google 网络检查")
-        case .cloudflare: String(localized: "Cloudflare 网络检查")
-        case .apple: String(localized: "Apple 网络检查")
-        case .microsoft: String(localized: "Microsoft 网络检查")
-        case .custom: String(localized: "自定义网络检查")
+        case .google: String(localized: "Google 网络检查", locale: AppLocalization.locale)
+        case .cloudflare: String(localized: "Cloudflare 网络检查", locale: AppLocalization.locale)
+        case .apple: String(localized: "Apple 网络检查", locale: AppLocalization.locale)
+        case .microsoft: String(localized: "Microsoft 网络检查", locale: AppLocalization.locale)
+        case .custom: String(localized: "自定义网络检查", locale: AppLocalization.locale)
         }
     }
 
@@ -954,17 +954,17 @@ enum RuleSchemeNetworkSettingsDraftError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .missingPlainDNS:
-            String(localized: "请至少保留一个普通 DNS 服务器")
+            String(localized: "请至少保留一个普通 DNS 服务器", locale: AppLocalization.locale)
         case .invalidPlainDNS(let value):
-            String(localized: "普通 DNS 地址无效：\(value)")
+            String(localized: "普通 DNS 地址无效：\(value)", locale: AppLocalization.locale)
         case .missingEncryptedDNS:
-            String(localized: "请至少保留一个国内 DNS 服务器")
+            String(localized: "请至少保留一个国内 DNS 服务器", locale: AppLocalization.locale)
         case .invalidEncryptedDNS(let value):
-            String(localized: "加密 DNS 地址无效：\(value)")
+            String(localized: "加密 DNS 地址无效：\(value)", locale: AppLocalization.locale)
         case .missingRemoteDNS:
-            String(localized: "请至少保留一个远程 DNS 服务器")
+            String(localized: "请至少保留一个远程 DNS 服务器", locale: AppLocalization.locale)
         case .invalidTestURL(let value):
-            String(localized: "测速地址无效：\(value)")
+            String(localized: "测速地址无效：\(value)", locale: AppLocalization.locale)
         }
     }
 }
@@ -1234,14 +1234,14 @@ struct RuleSchemeGroup: Codable, Hashable {
 
         var displayTitle: String {
             switch self {
-            case .select: String(localized: "手动选择")
-            case .urlTest: String(localized: "延迟优选")
+            case .select: String(localized: "手动选择", locale: AppLocalization.locale)
+            case .urlTest: String(localized: "延迟优选", locale: AppLocalization.locale)
             case .smart: "Smart"
-            case .fallback: String(localized: "故障转移")
-            case .loadBalance: String(localized: "负载均衡")
-            case .conditional: String(localized: "按网络选择")
-            case .relay: String(localized: "链式代理")
-            case .unsupported: String(localized: "未知策略")
+            case .fallback: String(localized: "故障转移", locale: AppLocalization.locale)
+            case .loadBalance: String(localized: "负载均衡", locale: AppLocalization.locale)
+            case .conditional: String(localized: "按网络选择", locale: AppLocalization.locale)
+            case .relay: String(localized: "链式代理", locale: AppLocalization.locale)
+            case .unsupported: String(localized: "未知策略", locale: AppLocalization.locale)
             }
         }
 

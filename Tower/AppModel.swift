@@ -10,10 +10,10 @@ enum RuleGroupRenameError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .emptyName: String(localized: "规则名称不能为空。")
-        case .missingGroup: String(localized: "找不到要修改的规则。")
-        case .duplicateName: String(localized: "已经存在同名规则。")
-        case .invalidNodeGroupName: String(localized: "请使用其他名称，避开内置策略名、逗号和换行。")
+        case .emptyName: String(localized: "规则名称不能为空。", locale: AppLocalization.locale)
+        case .missingGroup: String(localized: "找不到要修改的规则。", locale: AppLocalization.locale)
+        case .duplicateName: String(localized: "已经存在同名规则。", locale: AppLocalization.locale)
+        case .invalidNodeGroupName: String(localized: "请使用其他名称，避开内置策略名、逗号和换行。", locale: AppLocalization.locale)
         }
     }
 }
@@ -113,7 +113,7 @@ final class AppModel: ObservableObject {
         var isSingleSource = false
         var completedIDs: Set<UUID> = []
         var title: String {
-            String(localized: "正在刷新订阅（\(completedIDs.count)/\(sourceIDs.count)）")
+            String(localized: "正在刷新订阅（\(completedIDs.count)/\(sourceIDs.count)）", locale: AppLocalization.locale)
         }
     }
     @Published var nodeLatencies: [UUID: NodeLatencyMeasurement] = [:]
@@ -824,7 +824,7 @@ final class AppModel: ObservableObject {
         ruleSchemeCustomizations[scheme.id] = customization
         persist()
         showToast(
-            String(localized: "DNS 与网络设置已保存"),
+            String(localized: "DNS 与网络设置已保存", locale: AppLocalization.locale),
             symbol: "checkmark.circle.fill",
             tone: .success
         )
@@ -840,7 +840,7 @@ final class AppModel: ObservableObject {
         ruleSchemeCustomizations[scheme.id] = customization
         persist()
         showToast(
-            String(localized: "已恢复塔台默认 DNS"),
+            String(localized: "已恢复塔台默认 DNS", locale: AppLocalization.locale),
             symbol: "arrow.counterclockwise.circle.fill",
             tone: .success
         )
@@ -1027,7 +1027,7 @@ final class AppModel: ObservableObject {
         ruleGroupEmojiAutofill[scheme.id] = nil
         customRuleFlows.removeAll { $0.schemeID == scheme.id }
         showToast(
-            String(localized: "已恢复初始规则"),
+            String(localized: "已恢复初始规则", locale: AppLocalization.locale),
             symbol: "arrow.counterclockwise.circle.fill",
             tone: .success
         )
@@ -1040,8 +1040,8 @@ final class AppModel: ObservableObject {
         let materialized = materializedScheme(scheme)
         let saved = RuleScheme(
             id: "custom-\(UUID().uuidString.lowercased())",
-            name: trimmedName.isEmpty ? String(localized: "自定义规则") : trimmedName,
-            summary: String(localized: "本机保存的自定义规则"),
+            name: trimmedName.isEmpty ? String(localized: "自定义规则", locale: AppLocalization.locale) : trimmedName,
+            summary: String(localized: "本机保存的自定义规则", locale: AppLocalization.locale),
             groups: materialized.groups,
             rulesets: materialized.rulesets,
             updatedAt: .now,
@@ -1088,8 +1088,8 @@ final class AppModel: ObservableObject {
         if scheme.isBundled {
             base = RuleScheme(
                 id: "custom-\(UUID().uuidString.lowercased())",
-                name: String(localized: "\(scheme.name) 自定义"),
-                summary: String(localized: "本机保存的自定义规则"),
+                name: String(localized: "\(scheme.name) 自定义", locale: AppLocalization.locale),
+                summary: String(localized: "本机保存的自定义规则", locale: AppLocalization.locale),
                 groups: scheme.groups,
                 rulesets: scheme.rulesets,
                 isBundled: false
@@ -1134,7 +1134,7 @@ final class AppModel: ObservableObject {
         selectedPresetID = saved.id
         persist()
         showToast(
-            String(localized: "规则配置已保存"),
+            String(localized: "规则配置已保存", locale: AppLocalization.locale),
             symbol: "checkmark.circle.fill",
             tone: .success
         )
@@ -1307,7 +1307,7 @@ final class AppModel: ObservableObject {
         flow.localRuleSetID = ruleSet.id
         upsertCustomRuleFlow(flow)
         showToast(
-            String(localized: "已添加“\(ruleSet.name)”到当前规则"),
+            String(localized: "已添加“\(ruleSet.name)”到当前规则", locale: AppLocalization.locale),
             symbol: "checkmark.circle.fill",
             tone: .success
         )
@@ -1574,7 +1574,7 @@ final class AppModel: ObservableObject {
         guard generation == ruleOperationGeneration else { throw CancellationError() }
         upsertCustomRuleFlow(flow)
         showToast(
-            String(localized: "已添加“\(entry.name)”到当前规则"),
+            String(localized: "已添加“\(entry.name)”到当前规则", locale: AppLocalization.locale),
             symbol: "checkmark.circle.fill",
             tone: .success
         )
@@ -1866,11 +1866,11 @@ final class AppModel: ObservableObject {
 
         if result.failedRulesetCount > 0 {
             showToast(
-                String(localized: "已导入 \(result.scheme.groups.count) 个策略组，\(result.failedRulesetCount) 个规则列表下载失败"),
+                String(localized: "已导入 \(result.scheme.groups.count) 个策略组，\(result.failedRulesetCount) 个规则列表下载失败", locale: AppLocalization.locale),
                 symbol: "exclamationmark.triangle.fill"
             )
         } else {
-            showToast(String(localized: "已导入 \(result.scheme.groups.count) 个策略组"), symbol: "checkmark.circle.fill")
+            showToast(String(localized: "已导入 \(result.scheme.groups.count) 个策略组", locale: AppLocalization.locale), symbol: "checkmark.circle.fill")
         }
     }
 
@@ -1899,9 +1899,9 @@ final class AppModel: ObservableObject {
         }
 
         if failed > 0 {
-            showToast(String(localized: "\(failed) 个规则列表刷新失败"), symbol: "exclamationmark.triangle.fill")
+            showToast(String(localized: "\(failed) 个规则列表刷新失败", locale: AppLocalization.locale), symbol: "exclamationmark.triangle.fill")
         } else {
-            showToast(String(localized: "规则已更新"), symbol: "arrow.triangle.2.circlepath.circle.fill")
+            showToast(String(localized: "规则已更新", locale: AppLocalization.locale), symbol: "arrow.triangle.2.circlepath.circle.fill")
         }
     }
 
@@ -1926,7 +1926,7 @@ final class AppModel: ObservableObject {
         }
         persist(invalidateRuleCounts: false)
         showToast(
-            String(localized: "规则方案已更新"),
+            String(localized: "规则方案已更新", locale: AppLocalization.locale),
             symbol: "checkmark.circle.fill",
             tone: .success
         )
@@ -2143,8 +2143,8 @@ final class AppModel: ObservableObject {
     }
 
     func subscriptionName(for node: ProxyNode) -> String {
-        guard let sourceID = node.sourceID else { return String(localized: "自有节点") }
-        return subscriptions.first(where: { $0.id == sourceID })?.name ?? String(localized: "订阅节点")
+        guard let sourceID = node.sourceID else { return String(localized: "自有节点", locale: AppLocalization.locale) }
+        return subscriptions.first(where: { $0.id == sourceID })?.name ?? String(localized: "订阅节点", locale: AppLocalization.locale)
     }
 
     func latency(for node: ProxyNode) -> NodeLatencyMeasurement? {
@@ -2605,8 +2605,8 @@ final class AppModel: ObservableObject {
             return
         }
         let sourceSummary = sources.count == 1
-            ? String(localized: "已添加")
-            : String(localized: "已添加 \(sources.count) 个订阅，共")
+            ? String(localized: "已添加", locale: AppLocalization.locale)
+            : String(localized: "已添加 \(sources.count) 个订阅，共", locale: AppLocalization.locale)
         showToast(importSummary(sourceSummary, result: result), symbol: "checkmark.circle.fill")
     }
 
@@ -2615,9 +2615,9 @@ final class AppModel: ObservableObject {
     /// so the node total on screen always matches what was actually imported.
     private func importSummary(_ prefix: String, result: ImportResult) -> String {
         guard result.rejectedLineCount > 0 else {
-            return String(localized: "\(prefix) \(result.nodes.count) 个节点")
+            return String(localized: "\(prefix) \(result.nodes.count) 个节点", locale: AppLocalization.locale)
         }
-        return String(localized: "\(prefix) \(result.nodes.count) 个节点，跳过 \(result.rejectedLineCount) 条无法识别")
+        return String(localized: "\(prefix) \(result.nodes.count) 个节点，跳过 \(result.rejectedLineCount) 条无法识别", locale: AppLocalization.locale)
     }
 
     @discardableResult
@@ -2688,7 +2688,7 @@ final class AppModel: ObservableObject {
                 await synchronizeRenewalReminders(showFailure: false)
             }
             if showResult {
-                showToast(importSummary(String(localized: "已更新"), result: result), symbol: "arrow.triangle.2.circlepath.circle.fill")
+                showToast(importSummary(String(localized: "已更新", locale: AppLocalization.locale), result: result), symbol: "arrow.triangle.2.circlepath.circle.fill")
             }
             return true
         } catch {
@@ -2966,12 +2966,12 @@ final class AppModel: ObservableObject {
             return SubscriptionRefreshFailure(
                 id: id,
                 sourceName: source.name,
-                message: source.lastError ?? String(localized: "更新失败")
+                message: source.lastError ?? String(localized: "更新失败", locale: AppLocalization.locale)
             )
         }
         if failures.isEmpty {
             showToast(
-                String(localized: "\(succeeded) 个订阅已全部更新"),
+                String(localized: "\(succeeded) 个订阅已全部更新", locale: AppLocalization.locale),
                 symbol: "arrow.triangle.2.circlepath.circle.fill"
             )
         } else {
@@ -2992,7 +2992,7 @@ final class AppModel: ObservableObject {
         seedKnownCountries(for: result.nodes)
         nodes.append(contentsOf: result.nodes)
         persist()
-        showToast(String(localized: "节点已保存在本机"), symbol: "checkmark.circle.fill")
+        showToast(String(localized: "节点已保存在本机", locale: AppLocalization.locale), symbol: "checkmark.circle.fill")
     }
 
     @discardableResult
@@ -3001,7 +3001,7 @@ final class AppModel: ObservableObject {
         seedKnownCountries(for: result.nodes)
         nodes.append(contentsOf: result.nodes)
         persist()
-        showToast(importSummary(String(localized: "已添加"), result: result), symbol: "checkmark.circle.fill")
+        showToast(importSummary(String(localized: "已添加", locale: AppLocalization.locale), result: result), symbol: "checkmark.circle.fill")
         return result.nodes.count
     }
 
@@ -3010,7 +3010,7 @@ final class AppModel: ObservableObject {
         seedKnownCountries(for: [node])
         nodes.append(node)
         persist()
-        showToast(String(localized: "节点已保存在本机"), symbol: "checkmark.circle.fill")
+        showToast(String(localized: "节点已保存在本机", locale: AppLocalization.locale), symbol: "checkmark.circle.fill")
     }
 
     func updateSubscriptionDetails(
@@ -3072,7 +3072,7 @@ final class AppModel: ObservableObject {
         sortNodesToMatchSubscriptionOrder()
         persist()
         await synchronizeRenewalReminders(showFailure: false)
-        showToast(String(localized: "已更新"), symbol: "checkmark.circle.fill")
+        showToast(String(localized: "已更新", locale: AppLocalization.locale), symbol: "checkmark.circle.fill")
     }
 
     func updateLocalNode(_ node: ProxyNode, with draft: ManualNodeDraft) throws {
@@ -3086,7 +3086,7 @@ final class AppModel: ObservableObject {
         countryResolutionCompletedNodeIDs.remove(node.id)
         seedKnownCountries(for: [updated])
         persist()
-        showToast(String(localized: "节点已保存在本机"), symbol: "checkmark.circle.fill")
+        showToast(String(localized: "节点已保存在本机", locale: AppLocalization.locale), symbol: "checkmark.circle.fill")
     }
 
     /// Keeps refreshed node groups aligned with their source order. This is
@@ -3575,7 +3575,7 @@ final class AppModel: ObservableObject {
     func startLANSharing(listenerEnvironment: LANSubscriptionListenerEnvironment = .wifi) async {
         guard !isLANSharingStarting, !isLANSharingActive else { return }
         guard hasExportableSources else {
-            showToast(String(localized: "请先添加一个可用节点"), symbol: "exclamationmark.triangle.fill")
+            showToast(String(localized: "请先添加一个可用节点", locale: AppLocalization.locale), symbol: "exclamationmark.triangle.fill")
             return
         }
 
@@ -3627,7 +3627,7 @@ final class AppModel: ObservableObject {
                 return
             }
             lanSharingURL = startedURL
-            showToast(String(localized: "局域网订阅已开启"), symbol: "wifi.circle.fill")
+            showToast(String(localized: "局域网订阅已开启", locale: AppLocalization.locale), symbol: "wifi.circle.fill")
         } catch {
             server.stop()
             guard lanSharingGeneration == generation else { return }
@@ -3661,13 +3661,13 @@ final class AppModel: ObservableObject {
         lanSubscriptionServer?.stop()
         lanSubscriptionServer = nil
         lanSharingURL = nil
-        showToast(String(localized: "局域网订阅已关闭"), symbol: "wifi.slash")
+        showToast(String(localized: "局域网订阅已关闭", locale: AppLocalization.locale), symbol: "wifi.slash")
     }
 
     func rotateLANSharingToken() {
         if isLANSharingActive || isLANSharingStarting { stopLANSharing() }
         lanSharingToken = LANSubscriptionAccessTokenStore.rotate()
-        showToast(String(localized: "访问密钥已更换，旧链接已失效"), symbol: "key.fill")
+        showToast(String(localized: "访问密钥已更换，旧链接已失效", locale: AppLocalization.locale), symbol: "key.fill")
     }
 
     func lanSubscriptionURL(target: ClientTarget?, contentMode: ExportContentMode = .fullConfiguration) -> URL? {
@@ -3717,7 +3717,7 @@ final class AppModel: ObservableObject {
         if enabled {
             do {
                 guard try await reminderScheduler.requestAuthorization() else {
-                    showToast(String(localized: "没有获得通知权限，续费提醒未开启"), symbol: "bell.slash.fill")
+                    showToast(String(localized: "没有获得通知权限，续费提醒未开启", locale: AppLocalization.locale), symbol: "bell.slash.fill")
                     return
                 }
                 renewalRemindersEnabled = true
@@ -3726,18 +3726,18 @@ final class AppModel: ObservableObject {
                 let count = scheduledRenewalReminderCount
                 showToast(
                     count == 0
-                        ? String(localized: "已开启，检测到到期时间后会提醒")
-                        : String(localized: "已安排 \(count) 个续费提醒"),
+                        ? String(localized: "已开启，检测到到期时间后会提醒", locale: AppLocalization.locale)
+                        : String(localized: "已安排 \(count) 个续费提醒", locale: AppLocalization.locale),
                     symbol: "bell.badge.fill"
                 )
             } catch {
-                showToast(String(localized: "通知权限请求失败：\(error.localizedDescription)"), symbol: "exclamationmark.triangle.fill")
+                showToast(String(localized: "通知权限请求失败：\(error.localizedDescription)", locale: AppLocalization.locale), symbol: "exclamationmark.triangle.fill")
             }
         } else {
             renewalRemindersEnabled = false
             persist()
             await reminderScheduler.removeReminders()
-            showToast(String(localized: "续费提醒已关闭"), symbol: "bell.slash.fill")
+            showToast(String(localized: "续费提醒已关闭", locale: AppLocalization.locale), symbol: "bell.slash.fill")
         }
     }
 
@@ -3749,7 +3749,7 @@ final class AppModel: ObservableObject {
             )
         } catch {
             if showFailure {
-                showToast(String(localized: "安排提醒失败：\(error.localizedDescription)"), symbol: "exclamationmark.triangle.fill")
+                showToast(String(localized: "安排提醒失败：\(error.localizedDescription)", locale: AppLocalization.locale), symbol: "exclamationmark.triangle.fill")
             }
         }
     }
@@ -3786,7 +3786,7 @@ final class AppModel: ObservableObject {
     func resetAllConfiguration() async {
         guard !isCloudSyncing, !isRemovingCloudSnapshot else {
             showToast(
-                String(localized: "请等待 iCloud 同步完成后再重置"),
+                String(localized: "请等待 iCloud 同步完成后再重置", locale: AppLocalization.locale),
                 symbol: "icloud.and.arrow.up"
             )
             return
@@ -3872,7 +3872,7 @@ final class AppModel: ObservableObject {
         await reminderScheduler.removeReminders()
 
         showToast(
-            String(localized: "所有配置已重置"),
+            String(localized: "所有配置已重置", locale: AppLocalization.locale),
             symbol: "arrow.counterclockwise.circle.fill",
             tone: .success
         )
@@ -3905,7 +3905,7 @@ final class AppModel: ObservableObject {
             // Re-enabling must check iCloud again, not trust an old agreement.
             lastSyncedCloudSignature = nil
             lastCloudSyncAt = nil
-            showToast(String(localized: "已关闭 iCloud 同步"), symbol: "icloud.slash")
+            showToast(String(localized: "已关闭 iCloud 同步", locale: AppLocalization.locale), symbol: "icloud.slash")
         }
     }
 
@@ -3927,7 +3927,7 @@ final class AppModel: ObservableObject {
             cloudSyncIssue = nil
             lastCloudSyncAt = nil
             lastSyncedCloudSignature = nil
-            showToast(String(localized: "已删除 iCloud 上的副本"), symbol: "icloud.slash")
+            showToast(String(localized: "已删除 iCloud 上的副本", locale: AppLocalization.locale), symbol: "icloud.slash")
         } catch {
             showToast(error.localizedDescription, symbol: "exclamationmark.icloud.fill")
         }
@@ -4087,7 +4087,7 @@ final class AppModel: ObservableObject {
             needsAnotherSync = adoption.needsAnotherSync
             cloudSyncIssue = nil
             Self.cloudLog.notice("sync: done published=\(publishes, privacy: .public) moreToSync=\(adoption.needsAnotherSync, privacy: .public)")
-            if showResult { showToast(String(localized: "已同步到 iCloud"), symbol: "icloud") }
+            if showResult { showToast(String(localized: "已同步到 iCloud", locale: AppLocalization.locale), symbol: "icloud") }
             lastCloudSyncAt = .now
         } catch {
             if !Self.isCancellationError(error) {
@@ -4273,7 +4273,7 @@ final class AppModel: ObservableObject {
         if hadRulePriority, !UserDefaults.standard.bool(forKey: Self.rulePriorityResetNoticeKey) {
             UserDefaults.standard.set(true, forKey: Self.rulePriorityResetNoticeKey)
             showToast(
-                String(localized: "规则匹配顺序已恢复为方案原始顺序。"),
+                String(localized: "规则匹配顺序已恢复为方案原始顺序。", locale: AppLocalization.locale),
                 symbol: "arrow.uturn.backward.circle.fill",
                 tone: .success
             )
@@ -4622,7 +4622,7 @@ final class AppModel: ObservableObject {
             try persistence.save(snapshot)
         } catch {
             toast = ToastMessage(
-                text: String(localized: "保存失败：\(error.localizedDescription)"),
+                text: String(localized: "保存失败：\(error.localizedDescription)", locale: AppLocalization.locale),
                 symbol: "exclamationmark.triangle.fill"
             )
         }
@@ -4776,7 +4776,7 @@ final class AppModel: ObservableObject {
 
     private static func fallbackSubscriptionName(urlString: String, index: Int) -> String {
         guard let host = URL(string: urlString)?.host else {
-            return String(localized: "新订阅 \(index + 1)")
+            return String(localized: "新订阅 \(index + 1)", locale: AppLocalization.locale)
         }
         let labels = host.split(separator: ".").map(String.init)
         return labels.first(where: { $0.lowercased() != "www" }) ?? host

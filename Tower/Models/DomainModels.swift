@@ -43,9 +43,9 @@ enum AppTab: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .subscriptions: String(localized: "订阅")
-        case .rules: String(localized: "规则")
-        case .export: String(localized: "导出")
+        case .subscriptions: String(localized: "订阅", locale: AppLocalization.locale)
+        case .rules: String(localized: "规则", locale: AppLocalization.locale)
+        case .export: String(localized: "导出", locale: AppLocalization.locale)
         }
     }
 
@@ -101,7 +101,7 @@ struct SubscriptionSource: Identifiable, Codable, Hashable {
     }
 
     var safeHost: String {
-        URL(string: urlString)?.host ?? String(localized: "私密订阅")
+        URL(string: urlString)?.host ?? String(localized: "私密订阅", locale: AppLocalization.locale)
     }
 }
 
@@ -500,7 +500,7 @@ enum ProxyKind: String, Codable, CaseIterable, Identifiable {
         case .http: "HTTP"
         case .ssh: "SSH"
         case .trustTunnel: "TrustTunnel"
-        case .unknown: String(localized: "未知协议")
+        case .unknown: String(localized: "未知协议", locale: AppLocalization.locale)
         }
     }
 
@@ -1156,21 +1156,21 @@ enum RulePolicy: String, Codable, Hashable {
 
     var displayName: String {
         switch self {
-        case .direct: String(localized: "全球直连")
-        case .reject: String(localized: "广告拦截")
-        case .select: String(localized: "节点选择")
-        case .auto: String(localized: "自动选择")
-        case .international: String(localized: "国际流量")
-        case .domestic: String(localized: "国内流量")
-        case .foreignAds: String(localized: "国外广告")
-        case .ai: String(localized: "AI 服务")
+        case .direct: String(localized: "全球直连", locale: AppLocalization.locale)
+        case .reject: String(localized: "广告拦截", locale: AppLocalization.locale)
+        case .select: String(localized: "节点选择", locale: AppLocalization.locale)
+        case .auto: String(localized: "自动选择", locale: AppLocalization.locale)
+        case .international: String(localized: "国际流量", locale: AppLocalization.locale)
+        case .domestic: String(localized: "国内流量", locale: AppLocalization.locale)
+        case .foreignAds: String(localized: "国外广告", locale: AppLocalization.locale)
+        case .ai: String(localized: "AI 服务", locale: AppLocalization.locale)
         case .youtube: "YouTube"
-        case .media: String(localized: "国外媒体")
+        case .media: String(localized: "国外媒体", locale: AppLocalization.locale)
         case .telegram: "Telegram"
         case .googleFCM: "Google FCM"
-        case .apple: String(localized: "苹果服务")
-        case .microsoft: String(localized: "微软服务")
-        case .google: String(localized: "谷歌服务")
+        case .apple: String(localized: "苹果服务", locale: AppLocalization.locale)
+        case .microsoft: String(localized: "微软服务", locale: AppLocalization.locale)
+        case .google: String(localized: "谷歌服务", locale: AppLocalization.locale)
         }
     }
 
@@ -1226,7 +1226,7 @@ struct RulePreset: Identifiable, Codable, Hashable {
         RulePreset(
             id: "self-configuration",
             name: "Self-Configuration",
-            summary: String(localized: "AI、全球流媒体、广告过滤和国内外流量精细分流。"),
+            summary: String(localized: "AI、全球流媒体、广告过滤和国内外流量精细分流。", locale: AppLocalization.locale),
             symbol: "point.3.connected.trianglepath.dotted",
             tintName: "blue",
             assignments: [
@@ -1359,15 +1359,15 @@ enum ClientTarget: String, CaseIterable, Identifiable, Codable {
 
     var subtitle: String {
         switch self {
-        case .surge, .surgeMac: String(localized: "完整配置")
+        case .surge, .surgeMac: String(localized: "完整配置", locale: AppLocalization.locale)
         case .clash: "Clash YAML"
         case .clashApple, .clashVerge, .clashMac, .flClash, .mihomoParty: "Clash / mihomo"
-        case .shadowrocket: String(localized: "本地配置")
-        case .loon: String(localized: "完整配置")
+        case .shadowrocket: String(localized: "本地配置", locale: AppLocalization.locale)
+        case .loon: String(localized: "完整配置", locale: AppLocalization.locale)
         case .quanx: "Quantumult X"
-        case .hiddify: String(localized: "sing-box 内核")
+        case .hiddify: String(localized: "sing-box 内核", locale: AppLocalization.locale)
         case .egern: "Egern YAML"
-        case .anywhere: String(localized: "节点链接")
+        case .anywhere: String(localized: "节点链接", locale: AppLocalization.locale)
         case .v2box: "V2Ray / Xray"
         case .singBox: "sing-box JSON"
         case .clashMi: "Mihomo YAML"
@@ -1549,8 +1549,8 @@ enum ClientTarget: String, CaseIterable, Identifiable, Codable {
 
     var primaryImportTitle: String {
         supportsDirectConfigurationImport
-            ? String(localized: "一键导出到 \(name)")
-            : String(localized: "用文件导出到 \(name)")
+            ? String(localized: "一键导出到 \(name)", locale: AppLocalization.locale)
+            : String(localized: "用文件导出到 \(name)", locale: AppLocalization.locale)
     }
 
     func supports(_ kind: ProxyKind) -> Bool {
@@ -1624,8 +1624,8 @@ enum ExportContentMode: String, CaseIterable, Codable, Identifiable {
 
     var title: String {
         switch self {
-        case .fullConfiguration: String(localized: "完整配置")
-        case .nodesOnly: String(localized: "仅节点")
+        case .fullConfiguration: String(localized: "完整配置", locale: AppLocalization.locale)
+        case .nodesOnly: String(localized: "仅节点", locale: AppLocalization.locale)
         }
     }
 }
@@ -2071,7 +2071,7 @@ struct ImportResult: Sendable {
 
 enum TowerBrand {
     static var localizedName: String {
-        String(localized: "塔台")
+        String(localized: "塔台", locale: AppLocalization.locale)
     }
 
     static func migratedDefaultName(_ candidate: String?) -> String {

@@ -199,8 +199,8 @@ private struct AutoRefreshSection: View {
                 color: .green,
                 title: "打开塔台时更新订阅",
                 resolvedDetail: model.autoRefreshOnOpen
-                    ? String(localized: "每次打开或切回塔台时刷新一次")
-                    : String(localized: "只在您下拉刷新时更新")
+                    ? String(localized: "每次打开或切回塔台时刷新一次", locale: AppLocalization.locale)
+                    : String(localized: "只在您下拉刷新时更新", locale: AppLocalization.locale)
             )
         }
     }
@@ -432,7 +432,7 @@ private struct NodeAndExportSettingsCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            SectionHeading(title: "节点与配置", detail: String(localized: "默认保持原始订阅"))
+            SectionHeading(title: "节点与配置", detail: String(localized: "默认保持原始订阅", locale: AppLocalization.locale))
 
             Toggle(isOn: appendNameBinding) {
                 SettingsRowLabel(
@@ -733,7 +733,7 @@ private struct RenewalReminderSection: View {
                 } label: {
                     HStack(spacing: 10) {
                         Label(
-                            isExpanded ? String(localized: "收起具体提醒") : String(localized: "查看具体提醒"),
+                            isExpanded ? String(localized: "收起具体提醒", locale: AppLocalization.locale) : String(localized: "查看具体提醒", locale: AppLocalization.locale),
                             systemImage: "calendar.badge.clock"
                         )
                         .font(.subheadline.weight(.semibold))
@@ -811,9 +811,9 @@ private struct RenewalReminderDetailRow: View {
     private var statusTitle: String {
         switch status {
         case .upcoming(let days):
-            String(localized: "\(reminder.sourceName) 到期还剩 \(days) 天")
+            String(localized: "\(reminder.sourceName) 到期还剩 \(days) 天", locale: AppLocalization.locale)
         case .expired(let days):
-            String(localized: "\(reminder.sourceName) 已过期 \(days) 天")
+            String(localized: "\(reminder.sourceName) 已过期 \(days) 天", locale: AppLocalization.locale)
         }
     }
 }
@@ -832,8 +832,8 @@ struct LANSharingDestinationCard: View {
             SectionHeading(
                 title: "局域网共享",
                 detail: model.isLANSharingActive
-                    ? String(localized: "正在共享")
-                    : String(localized: "默认关闭")
+                    ? String(localized: "正在共享", locale: AppLocalization.locale)
+                    : String(localized: "默认关闭", locale: AppLocalization.locale)
             )
 
             HStack(spacing: 13) {
@@ -848,12 +848,12 @@ struct LANSharingDestinationCard: View {
 
                 VStack(alignment: .leading, spacing: 3) {
                     Text(model.isLANSharingActive
-                        ? String(localized: "支持安卓、Windows、Mac、路由器等。")
-                        : String(localized: "没有对外提供服务"))
+                        ? String(localized: "支持安卓、Windows、Mac、路由器等。", locale: AppLocalization.locale)
+                        : String(localized: "没有对外提供服务", locale: AppLocalization.locale))
                         .font(.headline)
                     Text(model.isLANSharingActive
-                        ? String(localized: "自动识别客户端")
-                        : String(localized: "只有您主动开启后才会监听局域网"))
+                        ? String(localized: "自动识别客户端", locale: AppLocalization.locale)
+                        : String(localized: "只有您主动开启后才会监听局域网", locale: AppLocalization.locale))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -882,8 +882,8 @@ struct LANSharingDestinationCard: View {
                         Image(systemName: model.isLANSharingActive ? "stop.fill" : "play.fill")
                     }
                     Text(model.isLANSharingActive
-                        ? String(localized: "停止共享")
-                        : String(localized: "开启局域网订阅"))
+                        ? String(localized: "停止共享", locale: AppLocalization.locale)
+                        : String(localized: "开启局域网订阅", locale: AppLocalization.locale))
                         .font(.headline)
                 }
                 .frame(maxWidth: .infinity)
@@ -965,7 +965,7 @@ struct LANSharingDestinationCard: View {
                         Image(systemName: "wand.and.stars")
                             .font(.caption.weight(.semibold))
                     }
-                    Text(selectedClient?.displayName ?? String(localized: "自动识别客户端"))
+                    Text(selectedClient?.displayName ?? String(localized: "自动识别客户端", locale: AppLocalization.locale))
                         .font(.subheadline.weight(.semibold))
                         .lineLimit(1)
                         .minimumScaleFactor(0.75)
@@ -983,7 +983,7 @@ struct LANSharingDestinationCard: View {
             }
             .buttonStyle(ResponsivePressButtonStyle())
             .accessibilityLabel(Text("链接格式"))
-            .accessibilityValue(Text(selectedClient?.displayName ?? String(localized: "自动识别客户端")))
+            .accessibilityValue(Text(selectedClient?.displayName ?? String(localized: "自动识别客户端", locale: AppLocalization.locale)))
             .accessibilityIdentifier("lan-client-picker")
         }
     }
@@ -1071,7 +1071,7 @@ private struct URLPanel: View {
                 action("复制", symbol: "doc.on.doc", isOn: false) {
                     UIPasteboard.general.string = url.absoluteString
                     didCopy.toggle()
-                    model.showToast(String(localized: "局域网订阅链接已复制"), symbol: "doc.on.doc.fill")
+                    model.showToast(String(localized: "局域网订阅链接已复制", locale: AppLocalization.locale), symbol: "doc.on.doc.fill")
                 }
                 action("二维码", symbol: "qrcode", isOn: isShowingQRCode) {
                     // Nothing here was thrown by a gesture, so the panel
@@ -1215,8 +1215,8 @@ struct LANSharingGuide: View {
                 Divider()
                 Label(
                     model.embedRemoteSubscriptionLinks
-                        ? String(localized: "原始订阅链接直接写入配置文件，交由客户端更新。不支持 Shadowrocket、Hiddify、V2Box 和 sing-box MT。")
-                        : String(localized: "高级机场仍由塔台使用您设置的 UA 和 DNS 获取；桌面端只读取塔台生成的结果，不会拿到机场订阅密钥。"),
+                        ? String(localized: "原始订阅链接直接写入配置文件，交由客户端更新。不支持 Shadowrocket、Hiddify、V2Box 和 sing-box MT。", locale: AppLocalization.locale)
+                        : String(localized: "高级机场仍由塔台使用您设置的 UA 和 DNS 获取；桌面端只读取塔台生成的结果，不会拿到机场订阅密钥。", locale: AppLocalization.locale),
                     systemImage: model.embedRemoteSubscriptionLinks
                         ? "exclamationmark.shield.fill"
                         : "lock.shield.fill"
