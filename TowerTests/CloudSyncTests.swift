@@ -189,7 +189,7 @@ final class CloudSyncTriggerTests: XCTestCase {
         )
 
         XCTAssertTrue(source.contains(".task(id: hasSeenWelcome)"), source)
-        XCTAssertTrue(source.contains("onChange(of: scenePhase)"), source)
+        XCTAssertTrue(source.contains("towerOnChange(of: scenePhase)"), source)
         XCTAssertTrue(source.contains("phase == .active"), source)
         XCTAssertEqual(
             occurrences(of: "guard hasSeenWelcome else { return }", in: source),

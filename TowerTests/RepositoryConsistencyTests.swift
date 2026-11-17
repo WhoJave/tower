@@ -686,7 +686,7 @@ final class RepositoryConsistencyTests: XCTestCase {
         XCTAssertTrue(filter.contains("@Environment(\\.accessibilityReduceMotion)"))
         XCTAssertTrue(filter.contains("withAnimation(TowerMotion.disclosure(reduceMotion: false))"))
         XCTAssertTrue(filter.contains(".transition(.opacity)"))
-        XCTAssertTrue(filter.contains(".sensoryFeedback(.selection"))
+        XCTAssertTrue(filter.contains(".towerSensoryFeedback(.selection"))
         XCTAssertFalse(filter.contains(".onMove("))
         XCTAssertFalse(filter.contains("editMode"))
         XCTAssertTrue(filter.contains(".frame(maxWidth: .infinity, alignment: .leading)"))
@@ -927,7 +927,7 @@ final class RepositoryConsistencyTests: XCTestCase {
         XCTAssertTrue(row.contains("TextField(\"配置名称\""), row)
         XCTAssertTrue(row.contains(".multilineTextAlignment(.trailing)"), row)
         XCTAssertFalse(
-            row.contains(".onChange(of: model.configurationName)"),
+            row.contains(".towerOnChange(of: model.configurationName)"),
             "已加载的编辑草稿必须独立，iCloud 或重绘不能在输入中把旧名称写回"
         )
         XCTAssertFalse(row.contains("VStack(alignment: .leading"), row)
@@ -982,7 +982,7 @@ final class RepositoryConsistencyTests: XCTestCase {
         let root = String(export[rootStart.lowerBound..<sheetStart.lowerBound])
 
         let observer = try XCTUnwrap(
-            root.range(of: ".onChange(of: isSettingsPresented)"),
+            root.range(of: ".towerOnChange(of: isSettingsPresented)"),
             "拖动关闭设置页时没有任何地方提交名称草稿"
         )
         let read = try XCTUnwrap(

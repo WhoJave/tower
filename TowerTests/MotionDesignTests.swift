@@ -127,7 +127,7 @@ final class MotionDesignTests: XCTestCase {
         let overlaySource = String(source[overlayStart.lowerBound...])
 
         XCTAssertTrue(overlaySource.contains("@State private var presentedToast"))
-        XCTAssertTrue(overlaySource.contains(".onChange(of: model.toast)"))
+        XCTAssertTrue(overlaySource.contains(".towerOnChange(of: model.toast)"))
         XCTAssertTrue(overlaySource.contains("withAnimation(appearance)"))
         XCTAssertFalse(
             overlaySource.contains(".animation(appearance, value: model.toast?.id)"),

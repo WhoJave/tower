@@ -8,7 +8,7 @@
 
 ## 工程基线
 
-- 原生 SwiftUI，最低 iOS 17，建议使用 Xcode 26 或更新版本。
+- 原生 SwiftUI，`ios16-compat` 分支目标最低 iOS 16（未完成真机验收），建议使用 Xcode 26 或更新版本；适配说明见 [IOS16_BACKPORT](docs/IOS16_BACKPORT.md)。
 - 工具链必须按 [AGENTS.md](AGENTS.md) 的机器规定设置 DEVELOPER_DIR，并用 xcodebuild -version 复核；不切换全局 xcode-select。命令见 [DEVELOPMENT](docs/DEVELOPMENT.md)，账号/上传排错见 [RELEASING](docs/RELEASING.md)。
 - 工程：`Tower.xcodeproj`；Scheme：`Tower`。
 - Bundle ID：`com.jzb.tower`。
