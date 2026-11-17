@@ -19,21 +19,21 @@ enum ManualNodeValidationError: LocalizedError, Equatable {
 
     var errorDescription: String? {
         switch self {
-        case .invalidCertificateFingerprint: String(localized: "证书指纹必须是 64 位十六进制 SHA-256，可包含冒号或短横线")
-        case .invalidServer: String(localized: "请填写节点服务器地址")
-        case .invalidPort: String(localized: "端口必须是 1 到 65535 之间的数字")
-        case .missingSecret: String(localized: "请填写该协议需要的密码或 UUID")
-        case .missingCipher: String(localized: "请填写 Shadowsocks 加密方式")
-        case .invalidVersion: String(localized: "Snell 版本必须是 1 到 6 之间的数字")
-        case .missingRealityPublicKey: String(localized: "REALITY 必须填写服务器公钥")
-        case .incompatibleRealityTransport: String(localized: "REALITY 当前只支持 TCP 或 gRPC 传输")
-        case .invalidSessionSettings: String(localized: "AnyTLS 会话参数必须是大于或等于 0 的整数")
-        case .missingTUICPassword: String(localized: "TUIC 需要同时填写 UUID 和密码")
-        case .invalidBandwidth: String(localized: "Hysteria 上下行带宽必须是大于 0 的整数")
-        case .incompleteWireGuard: String(localized: "WireGuard 需要私钥、公钥、本机地址和允许的网段")
-        case .unsupportedProtocol: String(localized: "该协议请改用协议链接导入")
-        case .incompleteSSH: String(localized: "SSH 需要用户名，以及密码或私钥")
-        case .incompleteTrustTunnel: String(localized: "TrustTunnel 需要用户名和密码")
+        case .invalidCertificateFingerprint: String(localized: "证书指纹必须是 64 位十六进制 SHA-256，可包含冒号或短横线", locale: AppLocalization.locale)
+        case .invalidServer: String(localized: "请填写节点服务器地址", locale: AppLocalization.locale)
+        case .invalidPort: String(localized: "端口必须是 1 到 65535 之间的数字", locale: AppLocalization.locale)
+        case .missingSecret: String(localized: "请填写该协议需要的密码或 UUID", locale: AppLocalization.locale)
+        case .missingCipher: String(localized: "请填写 Shadowsocks 加密方式", locale: AppLocalization.locale)
+        case .invalidVersion: String(localized: "Snell 版本必须是 1 到 6 之间的数字", locale: AppLocalization.locale)
+        case .missingRealityPublicKey: String(localized: "REALITY 必须填写服务器公钥", locale: AppLocalization.locale)
+        case .incompatibleRealityTransport: String(localized: "REALITY 当前只支持 TCP 或 gRPC 传输", locale: AppLocalization.locale)
+        case .invalidSessionSettings: String(localized: "AnyTLS 会话参数必须是大于或等于 0 的整数", locale: AppLocalization.locale)
+        case .missingTUICPassword: String(localized: "TUIC 需要同时填写 UUID 和密码", locale: AppLocalization.locale)
+        case .invalidBandwidth: String(localized: "Hysteria 上下行带宽必须是大于 0 的整数", locale: AppLocalization.locale)
+        case .incompleteWireGuard: String(localized: "WireGuard 需要私钥、公钥、本机地址和允许的网段", locale: AppLocalization.locale)
+        case .unsupportedProtocol: String(localized: "该协议请改用协议链接导入", locale: AppLocalization.locale)
+        case .incompleteSSH: String(localized: "SSH 需要用户名，以及密码或私钥", locale: AppLocalization.locale)
+        case .incompleteTrustTunnel: String(localized: "TrustTunnel 需要用户名和密码", locale: AppLocalization.locale)
         }
     }
 }

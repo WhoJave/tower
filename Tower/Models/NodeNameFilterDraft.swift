@@ -13,11 +13,11 @@ struct NodeNameFilterDraft: Equatable {
         var id: Self { self }
         var title: String {
             switch self {
-            case .contains: String(localized: "包含关键词")
-            case .excludes: String(localized: "不包含关键词")
-            case .prefix: String(localized: "以关键词开头")
-            case .suffix: String(localized: "以关键词结尾")
-            case .exact: String(localized: "名称完全相同")
+            case .contains: String(localized: "包含关键词", locale: AppLocalization.locale)
+            case .excludes: String(localized: "不包含关键词", locale: AppLocalization.locale)
+            case .prefix: String(localized: "以关键词开头", locale: AppLocalization.locale)
+            case .suffix: String(localized: "以关键词结尾", locale: AppLocalization.locale)
+            case .exact: String(localized: "名称完全相同", locale: AppLocalization.locale)
             }
         }
     }
@@ -106,8 +106,8 @@ enum NodeNameFilterMatcher {
         case invalid, timedOut
         var errorDescription: String? {
             switch self {
-            case .invalid: String(localized: "节点筛选表达式无效")
-            case .timedOut: String(localized: "匹配耗时过长，请简化正则表达式后重试。")
+            case .invalid: String(localized: "节点筛选表达式无效", locale: AppLocalization.locale)
+            case .timedOut: String(localized: "匹配耗时过长，请简化正则表达式后重试。", locale: AppLocalization.locale)
             }
         }
     }

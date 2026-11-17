@@ -68,7 +68,7 @@ struct SourceManagementView: View {
             batchActionBar
         }
         .alert(
-            pendingDeletion?.title ?? String(localized: "确认删除"),
+            pendingDeletion?.title ?? String(localized: "确认删除", locale: AppLocalization.locale),
             isPresented: Binding(
                 get: { pendingDeletion != nil },
                 set: { if !$0 { pendingDeletion = nil } }
@@ -140,8 +140,8 @@ struct SourceManagementView: View {
                     .buttonStyle(.plain)
                     .accessibilityValue(
                         selectedSubscriptionIDs.contains(source.id)
-                            ? String(localized: "已选择")
-                            : String(localized: "未选择")
+                            ? String(localized: "已选择", locale: AppLocalization.locale)
+                            : String(localized: "未选择", locale: AppLocalization.locale)
                     )
                 }
             } header: {
@@ -194,8 +194,8 @@ struct SourceManagementView: View {
                     .buttonStyle(.plain)
                     .accessibilityValue(
                         selectedLocalNodeIDs.contains(node.id)
-                            ? String(localized: "已选择")
-                            : String(localized: "未选择")
+                            ? String(localized: "已选择", locale: AppLocalization.locale)
+                            : String(localized: "未选择", locale: AppLocalization.locale)
                     )
                 }
             } header: {
@@ -313,12 +313,12 @@ struct SourceManagementView: View {
 
     private var navigationTitle: String {
         guard showsEntryTitle, tab == .exportFilter else {
-            return String(localized: "批量管理")
+            return String(localized: "批量管理", locale: AppLocalization.locale)
         }
         switch initialRoute {
-        case .nodes: return String(localized: "节点筛选")
-        case .regions: return String(localized: "覆盖地区")
-        case .subscriptions, .localNodes: return String(localized: "批量管理")
+        case .nodes: return String(localized: "节点筛选", locale: AppLocalization.locale)
+        case .regions: return String(localized: "覆盖地区", locale: AppLocalization.locale)
+        case .subscriptions, .localNodes: return String(localized: "批量管理", locale: AppLocalization.locale)
         }
     }
 
@@ -457,7 +457,7 @@ private struct SubscriptionRefreshToolbarButton: View {
             model.startSubscriptionRefresh(sourceIDs: sources.map(\.id))
         }
         .disabled(sources.isEmpty || isRefreshing)
-        .accessibilityLabel(isRefreshing ? String(localized: "更新中") : String(localized: "更新"))
+        .accessibilityLabel(isRefreshing ? String(localized: "更新中", locale: AppLocalization.locale) : String(localized: "更新", locale: AppLocalization.locale))
     }
 }
 
@@ -487,17 +487,17 @@ enum SourceManagementTab: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .subscriptions: String(localized: "订阅")
-        case .localNodes: String(localized: "自有节点")
-        case .exportFilter: String(localized: "导出筛选")
+        case .subscriptions: String(localized: "订阅", locale: AppLocalization.locale)
+        case .localNodes: String(localized: "自有节点", locale: AppLocalization.locale)
+        case .exportFilter: String(localized: "导出筛选", locale: AppLocalization.locale)
         }
     }
 
     var searchPrompt: String {
         switch self {
-        case .subscriptions: String(localized: "搜索名称或域名")
-        case .localNodes: String(localized: "搜索名称、地址或协议")
-        case .exportFilter: String(localized: "搜索节点、服务器或来源")
+        case .subscriptions: String(localized: "搜索名称或域名", locale: AppLocalization.locale)
+        case .localNodes: String(localized: "搜索名称、地址或协议", locale: AppLocalization.locale)
+        case .exportFilter: String(localized: "搜索节点、服务器或来源", locale: AppLocalization.locale)
         }
     }
 
@@ -515,17 +515,17 @@ private enum SourceManagementDeletion: Hashable {
 
     var title: String {
         switch self {
-        case .subscriptions(let sources): String(localized: "删除 \(sources.count) 个订阅？")
-        case .localNodes(let nodes): String(localized: "删除 \(nodes.count) 个自有节点？")
+        case .subscriptions(let sources): String(localized: "删除 \(sources.count) 个订阅？", locale: AppLocalization.locale)
+        case .localNodes(let nodes): String(localized: "删除 \(nodes.count) 个自有节点？", locale: AppLocalization.locale)
         }
     }
 
     var message: String {
         switch self {
         case .subscriptions(let sources):
-            String(localized: "所选订阅及其已经读取的节点会从这台设备移除。") + "\n\n" + sources.prefix(8).map(\.name).joined(separator: "\n")
+            String(localized: "所选订阅及其已经读取的节点会从这台设备移除。", locale: AppLocalization.locale) + "\n\n" + sources.prefix(8).map(\.name).joined(separator: "\n")
         case .localNodes(let nodes):
-            String(localized: "所选自有节点会从这台设备移除，此操作无法撤销。") + "\n\n" + nodes.prefix(8).map { NodeRegionResolver.displayName(for: $0) }.joined(separator: "\n")
+            String(localized: "所选自有节点会从这台设备移除，此操作无法撤销。", locale: AppLocalization.locale) + "\n\n" + nodes.prefix(8).map { NodeRegionResolver.displayName(for: $0) }.joined(separator: "\n")
         }
     }
 }

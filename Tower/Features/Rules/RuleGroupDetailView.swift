@@ -15,14 +15,14 @@ enum RulesetPresentation {
         case .inline(let rule):
             if let url = ruleset.resource.domainSetURL { return url.deletingPathExtension().lastPathComponent }
             if ruleset.origin == .supplement { return SupplementRule(line: rule)?.value ?? rule }
-            return rule.uppercased() == "FINAL" ? String(localized: "其余所有流量") : rule
+            return rule.uppercased() == "FINAL" ? String(localized: "其余所有流量", locale: AppLocalization.locale) : rule
         }
     }
 
     static func source(_ ruleset: RuleSchemeRuleset) -> String {
-        if ruleset.origin == .supplement { return String(localized: "你添加的规则") }
-        if case .added(let name) = ruleset.origin { return String(localized: "已添加：\(name)") }
-        guard let url = ruleset.resource.downloadURL else { return String(localized: "单条规则") }
+        if ruleset.origin == .supplement { return String(localized: "你添加的规则", locale: AppLocalization.locale) }
+        if case .added(let name) = ruleset.origin { return String(localized: "已添加：\(name)", locale: AppLocalization.locale) }
+        guard let url = ruleset.resource.downloadURL else { return String(localized: "单条规则", locale: AppLocalization.locale) }
         let path = url.path.lowercased()
         if path.contains("/acl4ssr/") { return "ACL4SSR" }
         if path.contains("/blackmatrix7/") { return "blackmatrix7" }
@@ -363,8 +363,8 @@ struct RuleGroupDetailView: View {
         guard newName != group.name else { return }
         guard !trimmedName.isEmpty, isEmoji else {
             nameError = trimmedName.isEmpty
-                ? String(localized: "名称不能为空。")
-                : String(localized: "Emoji 只能填一个表情符号。")
+                ? String(localized: "名称不能为空。", locale: AppLocalization.locale)
+                : String(localized: "Emoji 只能填一个表情符号。", locale: AppLocalization.locale)
             loadedGroup = nil
             loadDrafts()
             return
@@ -498,11 +498,11 @@ enum RuleLineKind: CaseIterable, Hashable {
 
     var title: String {
         switch self {
-        case .domainSuffix: String(localized: "含子域名")
-        case .domain: String(localized: "仅此域名")
-        case .keyword: String(localized: "关键词")
-        case .ipRange: String(localized: "IP 段")
-        case .other: String(localized: "其他")
+        case .domainSuffix: String(localized: "含子域名", locale: AppLocalization.locale)
+        case .domain: String(localized: "仅此域名", locale: AppLocalization.locale)
+        case .keyword: String(localized: "关键词", locale: AppLocalization.locale)
+        case .ipRange: String(localized: "IP 段", locale: AppLocalization.locale)
+        case .other: String(localized: "其他", locale: AppLocalization.locale)
         }
     }
 }
@@ -532,7 +532,7 @@ struct RulesetContentView: View {
         let kinds = RuleLineKind.allCases.filter { counts[$0, default: 0] > 0 }
         return ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                kindButton(nil, title: String(localized: "全部"), count: lines?.count ?? 0)
+                kindButton(nil, title: String(localized: "全部", locale: AppLocalization.locale), count: lines?.count ?? 0)
                 ForEach(kinds, id: \.self) { kind in
                     kindButton(kind, title: kind.title, count: counts[kind, default: 0])
                 }
@@ -632,10 +632,10 @@ private struct RuleLineRow: View {
 
     static func typeTitle(_ type: String) -> String {
         switch type.uppercased() {
-        case "DOMAIN": String(localized: "仅此域名")
-        case "DOMAIN-SUFFIX": String(localized: "含子域名")
-        case "DOMAIN-KEYWORD": String(localized: "关键词")
-        case "IP-CIDR", "IP-CIDR6": String(localized: "IP 段")
+        case "DOMAIN": String(localized: "仅此域名", locale: AppLocalization.locale)
+        case "DOMAIN-SUFFIX": String(localized: "含子域名", locale: AppLocalization.locale)
+        case "DOMAIN-KEYWORD": String(localized: "关键词", locale: AppLocalization.locale)
+        case "IP-CIDR", "IP-CIDR6": String(localized: "IP 段", locale: AppLocalization.locale)
         default: type
         }
     }
@@ -739,10 +739,10 @@ struct AddSupplementRuleSheet: View {
 
     private func coverage(of rule: SupplementRule) -> String {
         switch rule.kind {
-        case .domainSuffix: String(localized: "匹配 \(rule.value) 及其所有子域名")
-        case .domain: String(localized: "只匹配 \(rule.value)，不含子域名")
-        case .keyword: String(localized: "匹配域名里含有「\(rule.value)」的网站")
-        case .ipRange: String(localized: "匹配连接到 \(rule.value) 的流量")
+        case .domainSuffix: String(localized: "匹配 \(rule.value) 及其所有子域名", locale: AppLocalization.locale)
+        case .domain: String(localized: "只匹配 \(rule.value)，不含子域名", locale: AppLocalization.locale)
+        case .keyword: String(localized: "匹配域名里含有「\(rule.value)」的网站", locale: AppLocalization.locale)
+        case .ipRange: String(localized: "匹配连接到 \(rule.value) 的流量", locale: AppLocalization.locale)
         }
     }
 
@@ -754,8 +754,8 @@ struct AddSupplementRuleSheet: View {
         case .keyword: return nil
         }
         guard let hit = model.probeRule(host: host, in: scheme).result.hit else { return nil }
-        if hit.groupName == groupName { return String(localized: "目前已经走这个策略组") }
-        return String(localized: "目前会走「\(RulePolicyPresentation.nameWithoutLeadingEmoji(hit.groupName))」")
+        if hit.groupName == groupName { return String(localized: "目前已经走这个策略组", locale: AppLocalization.locale) }
+        return String(localized: "目前会走「\(RulePolicyPresentation.nameWithoutLeadingEmoji(hit.groupName))」", locale: AppLocalization.locale)
     }
 
     private func existingOwner(of rule: SupplementRule) -> String? {
@@ -768,7 +768,7 @@ struct AddSupplementRuleSheet: View {
         guard let rule = try? parsed.get() else { return }
         model.addSupplementRule(rule, toGroup: groupName, in: scheme)
         model.showToast(
-            String(localized: "已添加 \(rule.value)"),
+            String(localized: "已添加 \(rule.value)", locale: AppLocalization.locale),
             symbol: "checkmark.circle.fill",
             tone: .success
         )

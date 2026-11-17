@@ -26,12 +26,12 @@ enum CloudSyncError: LocalizedError, Equatable {
 
     var errorDescription: String? {
         switch self {
-        case .unavailable: String(localized: "iCloud 不可用，请检查系统设置里的 iCloud 云盘是否开启")
+        case .unavailable: String(localized: "iCloud 不可用，请检查系统设置里的 iCloud 云盘是否开启", locale: AppLocalization.locale)
         case .downloading:
-            String(localized: "iCloud 配置尚未下载完成，请稍后重试")
+            String(localized: "iCloud 配置尚未下载完成，请稍后重试", locale: AppLocalization.locale)
         case .conflict:
-            String(localized: "同步冲突，已保留双方配置。请从备份中选择要恢复的版本。")
-        case .noRemoteSnapshot: String(localized: "iCloud 上还没有配置")
+            String(localized: "同步冲突，已保留双方配置。请从备份中选择要恢复的版本。", locale: AppLocalization.locale)
+        case .noRemoteSnapshot: String(localized: "iCloud 上还没有配置", locale: AppLocalization.locale)
         }
     }
 }

@@ -31,11 +31,11 @@ enum DirectImportError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .unsupportedTarget(let target):
-            String(localized: "\(target.name) 暂不支持完整配置的一键导入")
+            String(localized: "\(target.name) 暂不支持完整配置的一键导入", locale: AppLocalization.locale)
         case .invalidSchemeURL:
-            String(localized: "无法生成客户端导入链接")
+            String(localized: "无法生成客户端导入链接", locale: AppLocalization.locale)
         case .localServerFailed:
-            String(localized: "无法启动本机临时导入服务")
+            String(localized: "无法启动本机临时导入服务", locale: AppLocalization.locale)
         }
     }
 }

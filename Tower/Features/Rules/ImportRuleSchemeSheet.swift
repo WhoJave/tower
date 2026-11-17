@@ -14,9 +14,9 @@ struct ImportRuleSchemeSheet: View {
         }
         var title: String {
             switch self {
-            case .link: String(localized: "链接")
-            case .text: String(localized: "文本")
-            case .file: String(localized: "文件")
+            case .link: String(localized: "链接", locale: AppLocalization.locale)
+            case .text: String(localized: "文本", locale: AppLocalization.locale)
+            case .file: String(localized: "文件", locale: AppLocalization.locale)
             }
         }
     }

@@ -15,7 +15,7 @@ struct LocalRoutingRuleDocument {
     struct InvalidLine: LocalizedError {
         let number: Int
         var errorDescription: String? {
-            String(localized: "第 \(number) 行无效，请检查类型、括号、引号和参数。")
+            String(localized: "第 \(number) 行无效，请检查类型、括号、引号和参数。", locale: AppLocalization.locale)
         }
     }
 

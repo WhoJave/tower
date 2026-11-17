@@ -11,12 +11,12 @@ enum SubscriptionError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .invalidURL: String(localized: "订阅地址无效")
-        case .invalidDNSURL: String(localized: "自定义 DNS 必须是 HTTPS 的 DNS-over-HTTPS 地址")
-        case .badResponse: String(localized: "订阅服务器返回了无法识别的响应")
-        case .httpStatus(let status): String(localized: "订阅服务器返回 HTTP \(status)")
-        case .emptySubscription: String(localized: "订阅内容为空")
-        case .noSupportedNodes: String(localized: "没有找到可识别的节点")
+        case .invalidURL: String(localized: "订阅地址无效", locale: AppLocalization.locale)
+        case .invalidDNSURL: String(localized: "自定义 DNS 必须是 HTTPS 的 DNS-over-HTTPS 地址", locale: AppLocalization.locale)
+        case .badResponse: String(localized: "订阅服务器返回了无法识别的响应", locale: AppLocalization.locale)
+        case .httpStatus(let status): String(localized: "订阅服务器返回 HTTP \(status)", locale: AppLocalization.locale)
+        case .emptySubscription: String(localized: "订阅内容为空", locale: AppLocalization.locale)
+        case .noSupportedNodes: String(localized: "没有找到可识别的节点", locale: AppLocalization.locale)
         }
     }
 }

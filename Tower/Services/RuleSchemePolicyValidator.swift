@@ -13,12 +13,12 @@ enum RuleSchemePolicyValidator {
 
         var displayTitle: String {
             switch self {
-            case .duplicateGroupName: String(localized: "策略组名称重复")
-            case .unknownGroupMember: String(localized: "候选策略不存在")
-            case .unknownRuleTarget: String(localized: "规则目标不存在")
-            case .cycle: String(localized: "策略组循环引用")
-            case .emptyGroup: String(localized: "策略组没有可用候选项")
-            case .invalidNodePattern: String(localized: "节点筛选表达式无效")
+            case .duplicateGroupName: String(localized: "策略组名称重复", locale: AppLocalization.locale)
+            case .unknownGroupMember: String(localized: "候选策略不存在", locale: AppLocalization.locale)
+            case .unknownRuleTarget: String(localized: "规则目标不存在", locale: AppLocalization.locale)
+            case .cycle: String(localized: "策略组循环引用", locale: AppLocalization.locale)
+            case .emptyGroup: String(localized: "策略组没有可用候选项", locale: AppLocalization.locale)
+            case .invalidNodePattern: String(localized: "节点筛选表达式无效", locale: AppLocalization.locale)
             }
         }
     }

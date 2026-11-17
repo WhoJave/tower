@@ -27,7 +27,7 @@ enum SharePayloadFactory {
     static func subscription(_ source: SubscriptionSource) -> SharePayload {
         SharePayload(
             title: source.name,
-            detail: String(localized: "订阅链接"),
+            detail: String(localized: "订阅链接", locale: AppLocalization.locale),
             value: source.urlString,
             symbol: "link.circle.fill"
         )

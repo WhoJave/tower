@@ -25,13 +25,13 @@ enum RuleCatalogCategory: String, Codable, CaseIterable, Hashable {
     var displayName: String {
         switch self {
         case .ai: "AI"
-        case .streaming: String(localized: "流媒体")
-        case .social: String(localized: "社交")
-        case .gaming: String(localized: "游戏")
-        case .advertising: String(localized: "广告拦截")
-        case .domestic: String(localized: "国内直连")
-        case .infrastructure: String(localized: "基础服务")
-        case .other: String(localized: "其他")
+        case .streaming: String(localized: "流媒体", locale: AppLocalization.locale)
+        case .social: String(localized: "社交", locale: AppLocalization.locale)
+        case .gaming: String(localized: "游戏", locale: AppLocalization.locale)
+        case .advertising: String(localized: "广告拦截", locale: AppLocalization.locale)
+        case .domestic: String(localized: "国内直连", locale: AppLocalization.locale)
+        case .infrastructure: String(localized: "基础服务", locale: AppLocalization.locale)
+        case .other: String(localized: "其他", locale: AppLocalization.locale)
         }
     }
 }
@@ -554,7 +554,7 @@ enum RuleCatalogError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidSourceURL:
-            String(localized: "规则地址无效")
+            String(localized: "规则地址无效", locale: AppLocalization.locale)
         }
     }
 }

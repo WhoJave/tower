@@ -9,10 +9,10 @@ enum RuleSchemeParseError: LocalizedError, Equatable {
 
     var errorDescription: String? {
         switch self {
-        case .notReadableText: String(localized: "规则配置不是可识别的文本")
-        case .noGroups: String(localized: "配置里没有找到可识别的策略组")
-        case .noRulesets: String(localized: "配置里没有找到可识别的规则")
-        case .unsupportedSyntax: String(localized: "配置包含无法安全转换的语法")
+        case .notReadableText: String(localized: "规则配置不是可识别的文本", locale: AppLocalization.locale)
+        case .noGroups: String(localized: "配置里没有找到可识别的策略组", locale: AppLocalization.locale)
+        case .noRulesets: String(localized: "配置里没有找到可识别的规则", locale: AppLocalization.locale)
+        case .unsupportedSyntax: String(localized: "配置包含无法安全转换的语法", locale: AppLocalization.locale)
         }
     }
 }

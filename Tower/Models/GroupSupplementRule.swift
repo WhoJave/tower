@@ -16,10 +16,10 @@ struct SupplementRule: Hashable, Identifiable {
 
         var title: String {
             switch self {
-            case .domainSuffix: String(localized: "域名及子域名")
-            case .domain: String(localized: "仅此域名")
-            case .keyword: String(localized: "包含关键词")
-            case .ipRange: String(localized: "IP 段")
+            case .domainSuffix: String(localized: "域名及子域名", locale: AppLocalization.locale)
+            case .domain: String(localized: "仅此域名", locale: AppLocalization.locale)
+            case .keyword: String(localized: "包含关键词", locale: AppLocalization.locale)
+            case .ipRange: String(localized: "IP 段", locale: AppLocalization.locale)
             }
         }
 
@@ -40,10 +40,10 @@ struct SupplementRule: Hashable, Identifiable {
 
         var errorDescription: String? {
             switch self {
-            case .empty: String(localized: "请输入要匹配的域名或 IP。")
-            case .invalidDomain: String(localized: "域名格式不正确，例如 example.com。")
-            case .invalidKeyword: String(localized: "关键词不能包含空格或逗号。")
-            case .invalidIPRange: String(localized: "IP 段格式不正确，例如 203.0.113.0/24。")
+            case .empty: String(localized: "请输入要匹配的域名或 IP。", locale: AppLocalization.locale)
+            case .invalidDomain: String(localized: "域名格式不正确，例如 example.com。", locale: AppLocalization.locale)
+            case .invalidKeyword: String(localized: "关键词不能包含空格或逗号。", locale: AppLocalization.locale)
+            case .invalidIPRange: String(localized: "IP 段格式不正确，例如 203.0.113.0/24。", locale: AppLocalization.locale)
             }
         }
     }

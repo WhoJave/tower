@@ -217,7 +217,7 @@ struct ConfigurationGenerator {
         scheme.groups = scheme.groups.map { group in
             let adapted = compatiblePolicy(group, target: target)
             if adapted.kind != group.kind || adapted.members != group.members || (adapted.parameters ?? [:]) != (group.parameters ?? [:]) {
-                adaptationDiagnostics.append(String(localized: "策略组“\(group.name)”已兼容转换为\(adapted.kind.displayTitle)，不支持的参数已忽略。"))
+                adaptationDiagnostics.append(String(localized: "策略组“\(group.name)”已兼容转换为\(adapted.kind.displayTitle)，不支持的参数已忽略。", locale: AppLocalization.locale))
             }
             return adapted
         }
@@ -262,7 +262,7 @@ struct ConfigurationGenerator {
         diagnostics += policyCapabilityIssues(scheme.groups, target: target)
         diagnostics += graphIssues.filter { $0.code != .emptyGroup }.map { issue in
             let detail = issue.names.joined(separator: ", ")
-            return String(localized: "策略组校验失败（\(issue.code.displayTitle)）：\(detail)。请修正后导出。")
+            return String(localized: "策略组校验失败（\(issue.code.displayTitle)）：\(detail)。请修正后导出。", locale: AppLocalization.locale)
         }
         let normalizedNames = scheme.groups.map { group in
             [.surge, .surgeMac, .loon, .quanx].contains(target) ? confName(group.name) : collapsingLineBreaks(group.name)
@@ -271,7 +271,7 @@ struct ConfigurationGenerator {
         if !collidedNames.isEmpty {
             let detail = collidedNames.joined(separator: ", ")
             let label = RuleSchemePolicyValidator.Code.duplicateGroupName.displayTitle
-            diagnostics.append(String(localized: "策略组校验失败（\(label)）：\(detail)。请修正后导出。"))
+            diagnostics.append(String(localized: "策略组校验失败（\(label)）：\(detail)。请修正后导出。", locale: AppLocalization.locale))
         }
         // Surge fetches a DOMAIN-SET itself when it is referenced remotely;
         // every other list is read from this device's copy.
@@ -279,20 +279,20 @@ struct ConfigurationGenerator {
             && scheme.rulesets.contains { !schemes.hasDomainSetContent($0.resource) }
         let missingRuleLists = scheme.rulesets.contains { !$0.isBinaryRuleSet && !schemes.hasRuleListContent($0.resource) }
         if missingDomainSets || missingRuleLists {
-            diagnostics.append(String(localized: "部分规则还没下载完成") + " · " + String(localized: "刷新规则"))
+            diagnostics.append(String(localized: "部分规则还没下载完成", locale: AppLocalization.locale) + " · " + String(localized: "刷新规则", locale: AppLocalization.locale))
         }
         var capabilityBlocked = !diagnostics.isEmpty
         diagnostics += adaptationDiagnostics
         if downgradedSmart {
-            diagnostics.append(String(localized: "当前客户端不支持 Smart，已转换为延迟优选。"))
+            diagnostics.append(String(localized: "当前客户端不支持 Smart，已转换为延迟优选。", locale: AppLocalization.locale))
         }
         if ignoredNotifications {
-            diagnostics.append(String(localized: "已忽略当前客户端不支持的通知设置。"))
+            diagnostics.append(String(localized: "已忽略当前客户端不支持的通知设置。", locale: AppLocalization.locale))
         }
         for (source, group) in zip(scheme.groups, resolved) where group.kind == .select
             && group.members == [builtinPolicyName("DIRECT", target: target)]
             && !(source.kind == .select && source.members == [.reference("DIRECT")]) {
-            diagnostics.append(String(localized: "策略组“\(group.name)”没有可用节点：其他策略组不再引用它，规则直接指向它时走直连。"))
+            diagnostics.append(String(localized: "策略组“\(group.name)”没有可用节点：其他策略组不再引用它，规则直接指向它时走直连。", locale: AppLocalization.locale))
         }
         let knownPolicies = Set(scheme.groups.map(\.name)
             + supported.map { NodeRegionResolver.displayName(for: $0) }
@@ -304,7 +304,7 @@ struct ConfigurationGenerator {
         let unknownPolicies = Set(scheme.rulesets.map(\.groupName) + references).subtracting(knownPolicies)
         if !unknownPolicies.isEmpty {
             let names = unknownPolicies.sorted().joined(separator: ", ")
-            diagnostics.append(String(localized: "规则引用了不存在的策略组：\(names)。请修正规则后导出。"))
+            diagnostics.append(String(localized: "规则引用了不存在的策略组：\(names)。请修正规则后导出。", locale: AppLocalization.locale))
         }
         let rulePlan = RuleSetEmissionPlanner(repository: schemes).plan(
             for: scheme,
@@ -323,7 +323,7 @@ struct ConfigurationGenerator {
             if !kept.isEmpty {
                 capabilityBlocked = true
                 let body = (["FINAL", rulePlan.finalGroupName ?? ""] + kept).joined(separator: ",")
-                diagnostics.append(String(localized: "无法转换规则：\(body) → \(target.name)。"))
+                diagnostics.append(String(localized: "无法转换规则：\(body) → \(target.name)。", locale: AppLocalization.locale))
             }
         }
         var unsupportedRuleCount = 0
@@ -334,7 +334,7 @@ struct ConfigurationGenerator {
         for resource in rulePlan.unreadableResources {
             if resource.policyName.uppercased().hasPrefix("REJECT") { skippedRejectCount += 1 }
             let file = resource.url.lastPathComponent
-            diagnostics.append(String(localized: "\(target.name) 无法读取 MRS 规则集，已跳过：\(file)（\(resource.policyName)）。"))
+            diagnostics.append(String(localized: "\(target.name) 无法读取 MRS 规则集，已跳过：\(file)（\(resource.policyName)）。", locale: AppLocalization.locale))
         }
         for rule in rulePlan.inlineRules {
             if rule.line.contains("-matching") || rule.line.contains("notification-") || rule.line.contains("always-capture") {
@@ -348,22 +348,22 @@ struct ConfigurationGenerator {
             if !supportedRule {
                 unsupportedRuleCount += 1
                 if rule.policyName.uppercased().hasPrefix("REJECT") { skippedRejectCount += 1 }
-                diagnostics.append(String(localized: "无法转换规则：\(rule.line) → \(target.name)。"))
+                diagnostics.append(String(localized: "无法转换规则：\(rule.line) → \(target.name)。", locale: AppLocalization.locale))
             }
         }
         if skippedRejectCount > 0 {
-            diagnostics.insert(String(localized: "\(skippedRejectCount) 条拦截规则无法在 \(target.name) 中表达，已跳过：这些请求不会被拦截。"), at: 0)
+            diagnostics.insert(String(localized: "\(skippedRejectCount) 条拦截规则无法在 \(target.name) 中表达，已跳过：这些请求不会被拦截。", locale: AppLocalization.locale), at: 0)
         }
         for policy in Set(scheme.rulesets.map(\.groupName) + references) where RoutingBuiltinPolicies.names.contains(policy) && !RoutingBuiltinPolicies.supports(policy, target: target) {
             capabilityBlocked = true
-            diagnostics.append(String(localized: "当前客户端不支持内置策略：\(policy)。"))
+            diagnostics.append(String(localized: "当前客户端不支持内置策略：\(policy)。", locale: AppLocalization.locale))
         }
         for (policy, replacement) in substitutedPolicies.sorted(by: { $0.key < $1.key }) {
-            diagnostics.append(String(localized: "已将内置策略 \(policy) 转换为 \(replacement)。"))
+            diagnostics.append(String(localized: "已将内置策略 \(policy) 转换为 \(replacement)。", locale: AppLocalization.locale))
         }
         if !droppedOptionNames.isEmpty {
             let names = droppedOptionNames.sorted().joined(separator: ", ")
-            diagnostics.append(String(localized: "已忽略当前客户端不支持的规则参数：\(names)。"))
+            diagnostics.append(String(localized: "已忽略当前客户端不支持的规则参数：\(names)。", locale: AppLocalization.locale))
         }
         let content: String
         switch target {
@@ -713,7 +713,7 @@ struct ConfigurationGenerator {
             }.keys.sorted()
             guard !supported || !unhandled.isEmpty else { return nil }
             let type = ([group.sourceType ?? group.kind.rawValue] + unhandled).joined(separator: ", ")
-            return String(localized: "策略组“\(group.name)”的类型或参数（\(type)）无法在 \(target.rawValue) 中保持原意，请先修改策略组。")
+            return String(localized: "策略组“\(group.name)”的类型或参数（\(type)）无法在 \(target.rawValue) 中保持原意，请先修改策略组。", locale: AppLocalization.locale)
         }
     }
 
@@ -845,23 +845,23 @@ struct ConfigurationGenerator {
             guard !exportedIDs.contains(node.id), node.sourceID.map(remoteSourceIDs.contains) != true else { return nil }
             let reason: String
             if excludedKinds.contains(node.kind) {
-                reason = String(localized: "已在协议筛选中排除。")
+                reason = String(localized: "已在协议筛选中排除。", locale: AppLocalization.locale)
             } else if !(supportedKindsOverride?.contains(node.kind) ?? target.supports(node.kind)) {
-                reason = String(localized: "当前客户端不支持此协议。")
+                reason = String(localized: "当前客户端不支持此协议。", locale: AppLocalization.locale)
             } else if [.singBox, .hiddify].contains(target), certificatePin(node) != nil {
-                reason = String(localized: "当前客户端无法保留此节点的证书指纹校验。")
+                reason = String(localized: "当前客户端无法保留此节点的证书指纹校验。", locale: AppLocalization.locale)
             } else if [.vmess, .vless].contains(node.kind), node.exportableUUID == nil {
-                reason = String(localized: "节点认证信息无效或不完整。")
+                reason = String(localized: "节点认证信息无效或不完整。", locale: AppLocalization.locale)
             } else if nodesOnly && (!target.supportsNodesOnlyExport
                 || ([ClientTarget.surge, .surgeMac].contains(target) && node.kind == .wireguard)
                 || (target == .shadowrocket && [.snell, .wireguard].contains(node.kind))) {
-                reason = String(localized: "仅节点格式无法保留完整参数，请使用完整配置。")
+                reason = String(localized: "仅节点格式无法保留完整参数，请使用完整配置。", locale: AppLocalization.locale)
             } else if target == .anywhere, let anywhere = AnywhereExport.unsupportedReason(node) {
                 reason = anywhere
             } else if !canExpressTransport(of: node, on: target) {
-                reason = String(localized: "当前客户端不支持此节点的传输方式。")
+                reason = String(localized: "当前客户端不支持此节点的传输方式。", locale: AppLocalization.locale)
             } else {
-                reason = String(localized: "此节点的协议参数无法在当前客户端完整保留。")
+                reason = String(localized: "此节点的协议参数无法在当前客户端完整保留。", locale: AppLocalization.locale)
             }
             return SkippedExportNode(name: node.name, kind: node.kind, reason: reason)
         }

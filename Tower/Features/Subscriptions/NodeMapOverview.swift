@@ -225,15 +225,15 @@ struct NodeMapOverview<Header: View>: View, Equatable {
                     if isTestingAnyNode {
                         // Reserve the completed count's widest value so batches
                         // crossing 9/99 don't repeatedly resize the capsule.
-                        Text(verbatim: "\(nodes.count)/\(nodes.count) · \(String(localized: "停止"))")
+                        Text(verbatim: "\(nodes.count)/\(nodes.count) · \(String(localized: "停止", locale: AppLocalization.locale))")
                             .hidden()
                             .overlay(alignment: .trailing) {
-                                Text(verbatim: "\(nodes.count - testingCount)/\(nodes.count) · \(String(localized: "停止"))")
+                                Text(verbatim: "\(nodes.count - testingCount)/\(nodes.count) · \(String(localized: "停止", locale: AppLocalization.locale))")
                             }
                             .monospacedDigit()
                             .transition(.opacity)
                     } else {
-                        Text(String(localized: "测速"))
+                        Text(String(localized: "测速", locale: AppLocalization.locale))
                             .transition(.opacity)
                     }
                 }
@@ -263,8 +263,8 @@ struct NodeMapOverview<Header: View>: View, Equatable {
         .disabled(nodes.isEmpty)
         .accessibilityLabel(
             isTestingAnyNode
-                ? String(localized: "停止测试全部节点")
-                : String(localized: "测试全部节点，当前方式为 \(model.selectedLatencyTestMode.title)")
+                ? String(localized: "停止测试全部节点", locale: AppLocalization.locale)
+                : String(localized: "测试全部节点，当前方式为 \(model.selectedLatencyTestMode.title)", locale: AppLocalization.locale)
         )
         .accessibilityHint(isTestingAnyNode ? "轻点停止测试，保留已有结果" : "轻点开始测试；长按选择测试方式")
         .accessibilityIdentifier("test-all-latencies")
@@ -587,8 +587,8 @@ struct ExpandableNodeRow: View {
                 .allowsHitTesting(!presentsAsDetail)
                 .accessibilityLabel(
                     isExpanded
-                        ? String(localized: "收起 \(NodeRegionResolver.displayName(for: presentedNode))")
-                        : String(localized: "展开 \(NodeRegionResolver.displayName(for: presentedNode))")
+                        ? String(localized: "收起 \(NodeRegionResolver.displayName(for: presentedNode))", locale: AppLocalization.locale)
+                        : String(localized: "展开 \(NodeRegionResolver.displayName(for: presentedNode))", locale: AppLocalization.locale)
                 )
 
                 Button {
@@ -627,11 +627,11 @@ struct ExpandableNodeRow: View {
                     } else if let countryCode = model.ipCountryCode(for: node) {
                         NodeCountryDetailLine(label: "IP 地区", countryCode: countryCode)
                     } else {
-                        NodeDetailLine(label: "IP 地区", value: String(localized: "未知"))
+                        NodeDetailLine(label: "IP 地区", value: String(localized: "未知", locale: AppLocalization.locale))
                     }
                     if let organizations = model.nodeNetworkOrganizations[node.id] {
                         NodeDetailLine(label: "网络组织", value: organizations.isEmpty
-                            ? String(localized: "未知")
+                            ? String(localized: "未知", locale: AppLocalization.locale)
                             : organizations.map { "AS\($0.asn) · \($0.name)" }.joined(separator: "\n"))
                     }
                     Text("IP 地区和网络组织来自服务器地址，不代表实际出口。")
@@ -859,10 +859,10 @@ private struct NodeLatencyBadge: View {
                     }
                     .transition(.opacity)
                 } else {
-                    Text(verbatim: measurement.isApplicable ? String(localized: "不可达") : "—")
+                    Text(verbatim: measurement.isApplicable ? String(localized: "不可达", locale: AppLocalization.locale) : "—")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(measurement.isApplicable ? MapLatencyBand.unreachable.color() : .secondary)
-                        .accessibilityLabel(measurement.errorMessage ?? String(localized: "不可达"))
+                        .accessibilityLabel(measurement.errorMessage ?? String(localized: "不可达", locale: AppLocalization.locale))
                         .transition(.opacity)
                 }
             } else if phase == .untested {

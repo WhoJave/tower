@@ -130,7 +130,7 @@ struct NodeFilterSections: View {
                     showsNameFilter = true
                 } label: {
                     FilterRow(
-                        title: String(localized: "节点名称"),
+                        title: String(localized: "节点名称", locale: AppLocalization.locale),
                         symbol: "text.magnifyingglass",
                         value: nameFilterSummary,
                         accessory: "chevron.right"
@@ -214,13 +214,13 @@ struct NodeFilterSections: View {
             if state != .all, eligible > 0 { complete = false }
         }
         return complete
-            ? String(localized: "全部")
+            ? String(localized: "全部", locale: AppLocalization.locale)
             : "\(selected)/\(groups.count)"
     }
 
     private var nameFilterSummary: String {
         guard let filter = model.nodeExportNameFilter else {
-            return String(localized: "未设置")
+            return String(localized: "未设置", locale: AppLocalization.locale)
         }
         let draft = NodeNameFilterDraft(pattern: filter.pattern)
         return draft.usesRegex ? filter.pattern : draft.keywords.replacingOccurrences(of: "\n", with: " · ")
@@ -234,7 +234,7 @@ struct NodeFilterSections: View {
             model.setNodes(filteredNodes, included: !allIncluded)
         } label: {
             Label(
-                allIncluded ? String(localized: "全不选") : String(localized: "全选"),
+                allIncluded ? String(localized: "全不选", locale: AppLocalization.locale) : String(localized: "全选", locale: AppLocalization.locale),
                 systemImage: allIncluded ? "xmark.circle.fill" : "checkmark.circle.fill"
             )
             .font(.subheadline.weight(.semibold))
@@ -263,7 +263,7 @@ struct NodeFilterSections: View {
     private var countryFilter: some View {
         Menu {
             exportGroupSelectionToggle(
-                title: String(localized: "全部地区"),
+                title: String(localized: "全部地区", locale: AppLocalization.locale),
                 nodes: model.availableNodes
             )
             Divider()
@@ -275,7 +275,7 @@ struct NodeFilterSections: View {
                 .towerMenuActionDismissBehavior(keepOpen: false)
         } label: {
             FilterRow(
-                title: String(localized: "国家地区"),
+                title: String(localized: "国家地区", locale: AppLocalization.locale),
                 symbol: "globe.asia.australia",
                 value: selectionSummary(countryOptions.map(\.nodes)),
                 accessory: "chevron.up.chevron.down"
@@ -292,7 +292,7 @@ struct NodeFilterSections: View {
     private var protocolFilter: some View {
         Menu {
             exportGroupSelectionToggle(
-                title: String(localized: "全部协议"),
+                title: String(localized: "全部协议", locale: AppLocalization.locale),
                 nodes: model.availableNodes
             )
             Divider()
@@ -309,7 +309,7 @@ struct NodeFilterSections: View {
                 .towerMenuActionDismissBehavior(keepOpen: false)
         } label: {
             FilterRow(
-                title: String(localized: "协议"),
+                title: String(localized: "协议", locale: AppLocalization.locale),
                 symbol: "network",
                 value: selectionSummary(protocolOptions.map(\.nodes)),
                 accessory: "chevron.up.chevron.down"
@@ -398,7 +398,7 @@ struct NodeFilterSections: View {
         }
         .buttonStyle(.plain)
         .disabled(!allowedByName)
-        .accessibilityValue(included ? String(localized: "已启用") : String(localized: "已停用"))
+        .accessibilityValue(included ? String(localized: "已启用", locale: AppLocalization.locale) : String(localized: "已停用", locale: AppLocalization.locale))
     }
 
     private var resolutionTaskID: Int {
@@ -439,7 +439,7 @@ struct NodeExportNameFilterSheet: View {
                     }
                 }
                 NodeNameFilterPreview(input: previewInput, result: previewResult,
-                    footer: String(localized: "预览基于当前已启用订阅的节点。手动取消勾选的节点仍不会导出。"))
+                    footer: String(localized: "预览基于当前已启用订阅的节点。手动取消勾选的节点仍不会导出。", locale: AppLocalization.locale))
                 if let saveError {
                     Section { Text(saveError).foregroundStyle(.red) }
                 }

@@ -9,9 +9,9 @@ enum LANSubscriptionRoutingError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .unsupportedTarget:
-            String(localized: "不支持这个 target 参数")
+            String(localized: "不支持这个 target 参数", locale: AppLocalization.locale)
         case .unknownUserAgent:
-            String(localized: "无法识别客户端，请在链接末尾指定 target=clash、surge、surfboard、loon、quanx、shadowrocket、sing-box、hiddify 或 egern")
+            String(localized: "无法识别客户端，请在链接末尾指定 target=clash、surge、surfboard、loon、quanx、shadowrocket、sing-box、hiddify 或 egern", locale: AppLocalization.locale)
         }
     }
 }
@@ -23,12 +23,12 @@ enum LANSubscriptionServerError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .failedToStart:
-            String(localized: "局域网订阅服务启动失败")
+            String(localized: "局域网订阅服务启动失败", locale: AppLocalization.locale)
         case .noWiFiAddress:
             // Says "Wi-Fi or wired" because the same message reaches a Mac on
             // Ethernet, where telling the user to connect Wi-Fi sends them
             // looking for a fault that is not there.
-            String(localized: "没有找到局域网地址，请先接入 Wi-Fi 或有线网络")
+            String(localized: "没有找到局域网地址，请先接入 Wi-Fi 或有线网络", locale: AppLocalization.locale)
         }
     }
 }

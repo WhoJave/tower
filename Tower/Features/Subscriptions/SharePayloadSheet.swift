@@ -45,7 +45,7 @@ struct SharePayloadSheet: View {
 
                     HStack(spacing: 10) {
                         shareAction(
-                            title: copied ? String(localized: "已复制") : String(localized: "复制链接"),
+                            title: copied ? String(localized: "已复制", locale: AppLocalization.locale) : String(localized: "复制链接", locale: AppLocalization.locale),
                             symbol: copied ? "checkmark" : "doc.on.doc"
                         ) {
                             UIPasteboard.general.string = payload.value
@@ -53,17 +53,17 @@ struct SharePayloadSheet: View {
                         }
 
                         ShareLink(item: payload.value) {
-                            shareActionLabel(title: String(localized: "分享链接"), symbol: "square.and.arrow.up")
+                            shareActionLabel(title: String(localized: "分享链接", locale: AppLocalization.locale), symbol: "square.and.arrow.up")
                         }
                         .buttonStyle(ResponsivePressButtonStyle())
 
                         if let qrFileURL {
                             ShareLink(item: qrFileURL) {
-                                shareActionLabel(title: String(localized: "分享二维码"), symbol: "qrcode")
+                                shareActionLabel(title: String(localized: "分享二维码", locale: AppLocalization.locale), symbol: "qrcode")
                             }
                             .buttonStyle(ResponsivePressButtonStyle())
                         } else {
-                            shareAction(title: String(localized: "分享二维码"), symbol: "qrcode") {}
+                            shareAction(title: String(localized: "分享二维码", locale: AppLocalization.locale), symbol: "qrcode") {}
                                 .disabled(true)
                         }
                     }

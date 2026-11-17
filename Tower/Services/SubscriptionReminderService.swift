@@ -51,8 +51,8 @@ enum SubscriptionReminderPlanner {
             return SubscriptionReminderPlan(
                 identifier: identifierPrefix + source.id.uuidString,
                 sourceName: source.name,
-                title: String(localized: "\(source.name) 到期还剩 1 天"),
-                body: String(localized: "订阅到期还剩 1 天，请及时续费。"),
+                title: String(localized: "\(source.name) 到期还剩 1 天", locale: AppLocalization.locale),
+                body: String(localized: "订阅到期还剩 1 天，请及时续费。", locale: AppLocalization.locale),
                 fireDate: fireDate,
                 expiryDate: expiry
             )

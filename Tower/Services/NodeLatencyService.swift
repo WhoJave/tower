@@ -16,7 +16,7 @@ enum NodeLatencyTestMode: String, CaseIterable, Identifiable, Sendable {
 
     var title: String {
         switch self {
-        case .automatic: String(localized: "自动")
+        case .automatic: String(localized: "自动", locale: AppLocalization.locale)
         case .icmp: "ICMP"
         case .tcp: "TCP"
         }
@@ -63,14 +63,14 @@ enum LatencyProbeError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .invalidHost: String(localized: "节点地址无效")
-        case .invalidPort: String(localized: "节点端口无效")
+        case .invalidHost: String(localized: "节点地址无效", locale: AppLocalization.locale)
+        case .invalidPort: String(localized: "节点端口无效", locale: AppLocalization.locale)
         case .resolutionFailed(let status):
-            String(localized: "无法解析节点地址（\(String(cString: gai_strerror(status)))）")
-        case .socketFailed: String(localized: "无法创建 ICMP 探测")
-        case .sendFailed: String(localized: "无法发送 ICMP 探测")
-        case .timeout: String(localized: "探测超时")
-        case .connectionFailed: String(localized: "节点端口不可达")
+            String(localized: "无法解析节点地址（\(String(cString: gai_strerror(status)))）", locale: AppLocalization.locale)
+        case .socketFailed: String(localized: "无法创建 ICMP 探测", locale: AppLocalization.locale)
+        case .sendFailed: String(localized: "无法发送 ICMP 探测", locale: AppLocalization.locale)
+        case .timeout: String(localized: "探测超时", locale: AppLocalization.locale)
+        case .connectionFailed: String(localized: "节点端口不可达", locale: AppLocalization.locale)
         }
     }
 }
@@ -196,7 +196,7 @@ actor NodeLatencyService {
     }
 
     private var tcpNotApplicable: NodeLatencyMeasurement {
-        var result = NodeLatencyMeasurement.unavailable(String(localized: "UDP 节点不适用 TCP 测试"))
+        var result = NodeLatencyMeasurement.unavailable(String(localized: "UDP 节点不适用 TCP 测试", locale: AppLocalization.locale))
         result.isApplicable = false
         return result
     }

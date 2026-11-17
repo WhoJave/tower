@@ -12,14 +12,14 @@ enum RuleImportError: LocalizedError, Equatable {
 
     var errorDescription: String? {
         switch self {
-        case .fileTooLarge: String(localized: "配置文件过大，请使用不超过 8 MB 的文本配置。")
-        case .invalidURL: String(localized: "规则地址无效")
-        case .insecureURL: String(localized: "请使用 HTTPS 规则地址")
-        case .badResponse: String(localized: "服务器返回了无法识别的响应")
-        case .httpStatus(let status): String(localized: "服务器返回 HTTP \(status)")
-        case .emptyBody: String(localized: "规则内容为空")
-        case .noRulesetsDownloaded: String(localized: "配置里引用的规则列表都没有下载成功")
-        case .receivedWebPage: String(localized: "这个地址返回的是网页，不是配置文件。请使用规则文件本身的地址。")
+        case .fileTooLarge: String(localized: "配置文件过大，请使用不超过 8 MB 的文本配置。", locale: AppLocalization.locale)
+        case .invalidURL: String(localized: "规则地址无效", locale: AppLocalization.locale)
+        case .insecureURL: String(localized: "请使用 HTTPS 规则地址", locale: AppLocalization.locale)
+        case .badResponse: String(localized: "服务器返回了无法识别的响应", locale: AppLocalization.locale)
+        case .httpStatus(let status): String(localized: "服务器返回 HTTP \(status)", locale: AppLocalization.locale)
+        case .emptyBody: String(localized: "规则内容为空", locale: AppLocalization.locale)
+        case .noRulesetsDownloaded: String(localized: "配置里引用的规则列表都没有下载成功", locale: AppLocalization.locale)
+        case .receivedWebPage: String(localized: "这个地址返回的是网页，不是配置文件。请使用规则文件本身的地址。", locale: AppLocalization.locale)
         }
     }
 }
@@ -34,9 +34,9 @@ struct RuleImportProgress: Sendable, Equatable {
 
     var title: String {
         switch stage {
-        case .configuration: String(localized: "正在下载配置…")
-        case .parsing: String(localized: "正在解析配置…")
-        case .rules: String(localized: "正在下载引用的规则（\(completed)/\(total)）")
+        case .configuration: String(localized: "正在下载配置…", locale: AppLocalization.locale)
+        case .parsing: String(localized: "正在解析配置…", locale: AppLocalization.locale)
+        case .rules: String(localized: "正在下载引用的规则（\(completed)/\(total)）", locale: AppLocalization.locale)
         }
     }
 }
@@ -59,7 +59,7 @@ struct RuleImportDownloadError: LocalizedError, Sendable {
     var isRulesetFailure = true
     var errorDescription: String? {
         let detail = failures.map { "\(RuleImportDownloadFailure.sourceName($0.url))：\($0.reason)" }.joined(separator: "\n")
-        return String(localized: "下载未完成，尚未导入。") + "\n" + detail
+        return String(localized: "下载未完成，尚未导入。", locale: AppLocalization.locale) + "\n" + detail
     }
     var retryableMirrorURLs: Set<URL> {
         guard isRulesetFailure else { return [] }
@@ -90,7 +90,7 @@ struct RuleSchemeImportService {
         let fileURL = rawFileURL(for: url)
         let filename = fileURL.lastPathComponent.trimmingCharacters(in: .whitespacesAndNewlines)
         if !fileURL.hasDirectoryPath, !filename.isEmpty, filename != "/" { return filename }
-        return fileURL.host ?? String(localized: "导入的规则")
+        return fileURL.host ?? String(localized: "导入的规则", locale: AppLocalization.locale)
     }
 
     func importScheme(from urlString: String, name: String, originalRulesetURLs: Set<URL> = [], progress: RuleImportProgressHandler? = nil) async throws -> RuleImportResult {
@@ -124,7 +124,7 @@ struct RuleSchemeImportService {
             data: payload,
             id: "imported-\(UUID().uuidString)",
             name: resolvedName.isEmpty ? Self.defaultName(for: url) : resolvedName,
-            summary: String(localized: "从 \(url.host ?? trimmed) 导入"),
+            summary: String(localized: "从 \(url.host ?? trimmed) 导入", locale: AppLocalization.locale),
             sourceURLString: trimmed,
             isBundled: false,
             useSelectedNodes: true
@@ -150,8 +150,8 @@ struct RuleSchemeImportService {
         let title = name.trimmingCharacters(in: .whitespacesAndNewlines)
         let filename = fileName.map { URL(fileURLWithPath: $0).lastPathComponent }
         var scheme = try parser.parse(text: content, id: "imported-\(UUID().uuidString)",
-            name: title.isEmpty ? (filename ?? String(localized: "导入的规则")) : title,
-            summary: String(localized: "从本地配置导入"), useSelectedNodes: true)
+            name: title.isEmpty ? (filename ?? String(localized: "导入的规则", locale: AppLocalization.locale)) : title,
+            summary: String(localized: "从本地配置导入", locale: AppLocalization.locale), useSelectedNodes: true)
         scheme = persistableRuleTemplate(scheme)
         scheme = replacingMirrors(in: scheme, urls: originalRulesetURLs)
         try await downloadRequiredRulesets(scheme.remoteRulesetURLs, generation: generation, progress: progress)
@@ -196,7 +196,7 @@ struct RuleSchemeImportService {
 
     private func downloadFailure(_ url: URL, error: Error) -> RuleImportDownloadFailure {
         let reason = (error as? URLError)?.code == .timedOut
-            ? String(localized: "连接超时，请检查网络或重试。")
+            ? String(localized: "连接超时，请检查网络或重试。", locale: AppLocalization.locale)
             : error.localizedDescription
         return RuleImportDownloadFailure(url: url, reason: reason)
     }

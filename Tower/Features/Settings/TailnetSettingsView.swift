@@ -7,9 +7,9 @@ struct TailnetSettingsRow: View {
     private var summary: String {
         let enabled = model.tailnets.filter(\.isEnabled).count
         guard !model.tailnets.isEmpty else {
-            return String(localized: "代理时也能访问家里电脑等 Tailscale 设备。")
+            return String(localized: "代理时也能访问家里电脑等 Tailscale 设备。", locale: AppLocalization.locale)
         }
-        return String(localized: "已启用 \(enabled) 个，写入支持的客户端配置。")
+        return String(localized: "已启用 \(enabled) 个，写入支持的客户端配置。", locale: AppLocalization.locale)
     }
 
     var body: some View {
@@ -103,14 +103,14 @@ private struct TailnetRow: View {
     private var detail: String {
         var parts: [String] = [
             connection.magicDNSSuffix ?? (connection.customControlURL == nil
-                ? String(localized: "官方控制服务器")
-                : String(localized: "自建控制服务器")),
+                ? String(localized: "官方控制服务器", locale: AppLocalization.locale)
+                : String(localized: "自建控制服务器", locale: AppLocalization.locale)),
         ]
         if !connection.subnets.isEmpty {
-            parts.append(String(localized: "\(connection.subnets.count) 个子网"))
+            parts.append(String(localized: "\(connection.subnets.count) 个子网", locale: AppLocalization.locale))
         }
         if model.hasTailnetAuthKey(connection.id) {
-            parts.append(String(localized: "已保存 Auth Key"))
+            parts.append(String(localized: "已保存 Auth Key", locale: AppLocalization.locale))
         }
         return parts.joined(separator: " · ")
     }
@@ -295,13 +295,13 @@ private struct TailnetEditorSheet: View {
             dismiss()
         } catch let error as TailnetConnection.ValidationError {
             errorMessage = switch error {
-            case .controlURL: String(localized: "控制服务器必须是 HTTPS 地址。")
-            case .subnet(let value): String(localized: "无法识别的子网“\(value)”，请用 192.168.1.0/24 这样的格式。")
-            case .magicDNSSuffix: String(localized: "MagicDNS 后缀格式不对，例如 tail1234.ts.net。")
-            case .authKey: String(localized: "Auth Key 不能包含空格、引号或逗号。")
+            case .controlURL: String(localized: "控制服务器必须是 HTTPS 地址。", locale: AppLocalization.locale)
+            case .subnet(let value): String(localized: "无法识别的子网“\(value)”，请用 192.168.1.0/24 这样的格式。", locale: AppLocalization.locale)
+            case .magicDNSSuffix: String(localized: "MagicDNS 后缀格式不对，例如 tail1234.ts.net。", locale: AppLocalization.locale)
+            case .authKey: String(localized: "Auth Key 不能包含空格、引号或逗号。", locale: AppLocalization.locale)
             }
         } catch {
-            errorMessage = String(localized: "无法保存到钥匙串，请重试。")
+            errorMessage = String(localized: "无法保存到钥匙串，请重试。", locale: AppLocalization.locale)
         }
     }
 }

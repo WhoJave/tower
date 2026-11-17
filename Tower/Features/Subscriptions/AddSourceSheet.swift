@@ -45,9 +45,9 @@ struct AddSourceSheet: View {
         var id: String { rawValue }
         var title: String {
             switch self {
-            case .paste: String(localized: "粘贴识别")
-            case .scan: String(localized: "扫码")
-            case .manual: String(localized: "手动添加")
+            case .paste: String(localized: "粘贴识别", locale: AppLocalization.locale)
+            case .scan: String(localized: "扫码", locale: AppLocalization.locale)
+            case .manual: String(localized: "手动添加", locale: AppLocalization.locale)
             }
         }
 
@@ -104,7 +104,7 @@ struct AddSourceSheet: View {
                     Text("订阅内容、节点凭据和转换结果都只保存在这台设备上。")
                 }
             }
-            .navigationTitle(editingNode == nil ? String(localized: "添加订阅或节点") : String(localized: "编辑"))
+            .navigationTitle(editingNode == nil ? String(localized: "添加订阅或节点", locale: AppLocalization.locale) : String(localized: "编辑", locale: AppLocalization.locale))
             .navigationBarTitleDisplayMode(.inline)
             .scrollDismissesKeyboard(.interactively)
             .toolbar {
@@ -733,11 +733,11 @@ struct AddSourceSheet: View {
     }
 
     private var saveButtonTitle: String {
-        if editingNode != nil { return String(localized: "保存") }
-        guard isSaving else { return String(localized: "添加") }
+        if editingNode != nil { return String(localized: "保存", locale: AppLocalization.locale) }
+        guard isSaving else { return String(localized: "添加", locale: AppLocalization.locale) }
         switch detectedKind {
-        case .subscription, .subscriptionBatch: return String(localized: "正在读取…")
-        default: return String(localized: "正在添加…")
+        case .subscription, .subscriptionBatch: return String(localized: "正在读取…", locale: AppLocalization.locale)
+        default: return String(localized: "正在添加…", locale: AppLocalization.locale)
         }
     }
 
@@ -798,13 +798,13 @@ struct AddSourceSheet: View {
 
     private var secretPrompt: String {
         switch manualDraft.kind {
-        case .shadowsocks, .shadowsocksR: String(localized: "密码")
-        case .trojan, .hysteria2, .anytls, .snell: String(localized: "密码或 PSK")
-        case .hysteria: String(localized: "认证密码")
-        case .wireguard: String(localized: "WireGuard 密钥")
-        case .socks5, .http, .masque, .ssh: String(localized: "密码（可选）")
-        case .trustTunnel: String(localized: "密码")
-        default: String(localized: "认证信息")
+        case .shadowsocks, .shadowsocksR: String(localized: "密码", locale: AppLocalization.locale)
+        case .trojan, .hysteria2, .anytls, .snell: String(localized: "密码或 PSK", locale: AppLocalization.locale)
+        case .hysteria: String(localized: "认证密码", locale: AppLocalization.locale)
+        case .wireguard: String(localized: "WireGuard 密钥", locale: AppLocalization.locale)
+        case .socks5, .http, .masque, .ssh: String(localized: "密码（可选）", locale: AppLocalization.locale)
+        case .trustTunnel: String(localized: "密码", locale: AppLocalization.locale)
+        default: String(localized: "认证信息", locale: AppLocalization.locale)
         }
     }
 
@@ -844,7 +844,7 @@ struct AddSourceSheet: View {
             $0.canLoadObject(ofClass: NSString.self) || $0.canLoadObject(ofClass: NSURL.self)
         }) else {
             if automatically { focusSourceAfterEmptyClipboard() }
-            else { errorMessage = String(localized: "等待有效的订阅链接或节点协议") }
+            else { errorMessage = String(localized: "等待有效的订阅链接或节点协议", locale: AppLocalization.locale) }
             return
         }
         let completion: @Sendable (NSItemProviderReading?, Error?) -> Void = { object, _ in
@@ -858,7 +858,7 @@ struct AddSourceSheet: View {
                 clipboardProgress = nil
                 guard !value.isEmpty else {
                     if automatically { focusSourceAfterEmptyClipboard() }
-                    else { errorMessage = String(localized: "等待有效的订阅链接或节点协议") }
+                    else { errorMessage = String(localized: "等待有效的订阅链接或节点协议", locale: AppLocalization.locale) }
                     return
                 }
                 guard !automatically || detector.detect(value).isSupported else {

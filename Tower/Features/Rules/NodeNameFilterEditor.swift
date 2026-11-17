@@ -56,7 +56,7 @@ struct CustomNodeFilterCreator: View {
             }
         }
         .onAppear {
-            if name.isEmpty { name = uniqueName(String(localized: "自定义节点")) }
+            if name.isEmpty { name = uniqueName(String(localized: "自定义节点", locale: AppLocalization.locale)) }
         }
         .task(id: previewInput) {
             let input = previewInput
@@ -225,7 +225,7 @@ struct NodeNameFilterFields: View {
                 .buttonStyle(SelectionIndicatorButtonStyle())
                 .foregroundStyle(Color.accentColor)
                 .accessibilityIdentifier("node-keyword-add")
-                Text(draft.style == .excludes ? String(localized: "排除名称包含任一关键词的节点，忽略大小写。") : String(localized: "例如 jp、hk，可筛选名称中包含这些文字的节点；多个关键词满足任意一个即可。"))
+                Text(draft.style == .excludes ? String(localized: "排除名称包含任一关键词的节点，忽略大小写。", locale: AppLocalization.locale) : String(localized: "例如 jp、hk，可筛选名称中包含这些文字的节点；多个关键词满足任意一个即可。", locale: AppLocalization.locale))
                     .font(.footnote).foregroundStyle(.secondary)
                     .accessibilityIdentifier("node-keyword-help")
                 Divider().padding(.vertical, 6)
@@ -255,7 +255,7 @@ struct NodeNameFilterFields: View {
 
     private func keywordChip(_ keyword: Keyword) -> some View {
         HStack(spacing: 4) {
-            Text(verbatim: keyword.value.isEmpty ? String(localized: "关键词") : keyword.value)
+            Text(verbatim: keyword.value.isEmpty ? String(localized: "关键词", locale: AppLocalization.locale) : keyword.value)
                 .lineLimit(1).hidden()
                 .frame(minWidth: 20, minHeight: 44)
                 .overlay(alignment: .leading) {
@@ -392,7 +392,7 @@ struct NodeNameFilterPreview: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let input: NodeNameFilterPreviewInput
     let result: NodeNameFilterPreviewResult?
-    var footer: String = String(localized: "基于已启用且勾选的本地节点。来源限制、其他排除条件与客户端支持的协议仍会影响最终候选；未下载的节点无法预览。")
+    var footer: String = String(localized: "基于已启用且勾选的本地节点。来源限制、其他排除条件与客户端支持的协议仍会影响最终候选；未下载的节点无法预览。", locale: AppLocalization.locale)
 
     // Animate only newly completed content, not the list's layout or every edit.
     private var resultTransition: AnyTransition {

@@ -23,30 +23,30 @@ enum AnywhereExport {
     /// Why a node cannot be written for Anywhere, or nil when it can.
     static func unsupportedReason(_ node: ProxyNode) -> String? {
         if node.kind == .vless, UUID(uuidString: node.uuid ?? "") == nil {
-            return String(localized: "节点认证信息无效或不完整。")
+            return String(localized: "节点认证信息无效或不完整。", locale: AppLocalization.locale)
         }
         // Anywhere's parsers have no field for these; never silently weaken
         // a pin or drop a requirement. Dropping skip-cert-verify would make
         // the node fail its handshake: it would look fine and not connect.
         if node.skipCertificateVerification {
-            return String(localized: "Anywhere 总是校验服务器证书，无法保留此节点的“跳过证书校验”，导出后会连接失败。")
+            return String(localized: "Anywhere 总是校验服务器证书，无法保留此节点的“跳过证书校验”，导出后会连接失败。", locale: AppLocalization.locale)
         }
         if !(node.certificateFingerprint ?? "").isEmpty {
-            return String(localized: "Anywhere 不支持证书指纹固定。")
+            return String(localized: "Anywhere 不支持证书指纹固定。", locale: AppLocalization.locale)
         }
         if node.udpRelayEnabled == false {
-            return String(localized: "Anywhere 无法关闭此节点的 UDP 转发。")
+            return String(localized: "Anywhere 无法关闭此节点的 UDP 转发。", locale: AppLocalization.locale)
         }
         if let fp = node.fingerprint, !fp.isEmpty,
            fingerprints[fp.lowercased()] == nil, !nativeFingerprints.contains(fp) {
-            return String(localized: "Anywhere 不支持 TLS 指纹 \(fp)。")
+            return String(localized: "Anywhere 不支持 TLS 指纹 \(fp)。", locale: AppLocalization.locale)
         }
         if !(node.portHopping ?? "").isEmpty || !(node.plugin ?? "").isEmpty {
-            return String(localized: "Anywhere 不支持此节点的端口跳跃或插件。")
+            return String(localized: "Anywhere 不支持此节点的端口跳跃或插件。", locale: AppLocalization.locale)
         }
         let transport = node.transport?.lowercased() ?? "tcp"
         if (node.usesReality && node.kind != .vless) || (node.kind != .vless && !["", "tcp"].contains(transport)) {
-            return String(localized: "Anywhere 只有 VLESS 支持 Reality 和 TCP 以外的传输方式。")
+            return String(localized: "Anywhere 只有 VLESS 支持 Reality 和 TCP 以外的传输方式。", locale: AppLocalization.locale)
         }
         let supported: Bool
         switch node.kind {
@@ -64,7 +64,7 @@ enum AnywhereExport {
         default:
             supported = true
         }
-        return supported ? nil : String(localized: "此节点的协议参数无法在当前客户端完整保留。")
+        return supported ? nil : String(localized: "此节点的协议参数无法在当前客户端完整保留。", locale: AppLocalization.locale)
     }
 
     static func link(for node: ProxyNode) -> String {

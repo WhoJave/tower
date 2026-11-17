@@ -6,7 +6,7 @@ import Foundation
 enum SelfConfigurationSource {
     static let name = "Self-Configuration"
     static var summary: String {
-        String(localized: "AI、流媒体、广告和国内外流量精细分流。")
+        String(localized: "AI、流媒体、广告和国内外流量精细分流。", locale: AppLocalization.locale)
     }
     static let projectURL = URL(
         string: "https://github.com/ClashConnectRules/Self-Configuration"

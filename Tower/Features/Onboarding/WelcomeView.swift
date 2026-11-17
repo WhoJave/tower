@@ -498,7 +498,7 @@ private struct WelcomeOverviewScene: View {
     }
 
     private var accessibilitySummary: String {
-        let inputs = [String(localized: "订阅"), String(localized: "节点"), String(localized: "规则")]
+        let inputs = [String(localized: "订阅", locale: AppLocalization.locale), String(localized: "节点", locale: AppLocalization.locale), String(localized: "规则", locale: AppLocalization.locale)]
         return inputs.joined(separator: ", ") + " → " + TowerBrand.localizedName + " → "
             + clients.map(\.name).joined(separator: ", ")
     }
@@ -641,8 +641,8 @@ private struct WelcomeSubscriptionScene: View {
     }
 
     private var accessibilitySummary: String {
-        [String(localized: "粘贴识别"), String(localized: "已识别为订阅链接"), String(localized: "我的订阅"),
-         [String(localized: "香港"), String(localized: "日本"), String(localized: "新加坡")].joined(separator: ", ")]
+        [String(localized: "粘贴识别", locale: AppLocalization.locale), String(localized: "已识别为订阅链接", locale: AppLocalization.locale), String(localized: "我的订阅", locale: AppLocalization.locale),
+         [String(localized: "香港", locale: AppLocalization.locale), String(localized: "日本", locale: AppLocalization.locale), String(localized: "新加坡", locale: AppLocalization.locale)].joined(separator: ", ")]
             .joined(separator: " · ")
     }
 }
@@ -802,10 +802,10 @@ private enum RoutingLane: Int, CaseIterable {
     /// "AI" is the group's name in every language, so it is not localized.
     var title: String {
         switch self {
-        case .proxy: String(localized: "代理")
+        case .proxy: String(localized: "代理", locale: AppLocalization.locale)
         case .ai: "AI"
-        case .direct: String(localized: "直连")
-        case .reject: String(localized: "拦截")
+        case .direct: String(localized: "直连", locale: AppLocalization.locale)
+        case .reject: String(localized: "拦截", locale: AppLocalization.locale)
         }
     }
 
@@ -1053,7 +1053,7 @@ private struct WelcomeExportExample: View {
         // Demonstrate the Mac subscription-copy path without probing installed
         // apps or starting an import from this replayable example.
         if TowerPlatform.isMac && [.surgeMac, .clashMac].contains(client) {
-            return String(localized: "复制订阅")
+            return String(localized: "复制订阅", locale: AppLocalization.locale)
         }
         return client.primaryImportTitle
     }

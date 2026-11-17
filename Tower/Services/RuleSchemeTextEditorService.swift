@@ -15,19 +15,19 @@ enum RuleSchemeTextValidationError: LocalizedError, Equatable {
         case .invalidConfiguration(let message):
             message
         case .invalidLine(let line):
-            String(localized: "第 \(line) 行不是可识别的规则配置")
+            String(localized: "第 \(line) 行不是可识别的规则配置", locale: AppLocalization.locale)
         case .duplicatePolicy(let name, let line):
-            String(localized: "第 \(line) 行重复定义了策略组“\(name)”")
+            String(localized: "第 \(line) 行重复定义了策略组“\(name)”", locale: AppLocalization.locale)
         case .unknownPolicy(let name, let line):
-            String(localized: "第 \(line) 行引用了不存在的策略组“\(name)”")
+            String(localized: "第 \(line) 行引用了不存在的策略组“\(name)”", locale: AppLocalization.locale)
         case .unknownReference(let name, let line):
-            String(localized: "第 \(line) 行引用了不存在的成员“\(name)”")
+            String(localized: "第 \(line) 行引用了不存在的成员“\(name)”", locale: AppLocalization.locale)
         case .invalidPlainDNS(let value, let line):
-            String(localized: "第 \(line) 行的普通 DNS 地址无效：\(value)")
+            String(localized: "第 \(line) 行的普通 DNS 地址无效：\(value)", locale: AppLocalization.locale)
         case .invalidEncryptedDNS(let value, let line):
-            String(localized: "第 \(line) 行的加密 DNS 地址无效：\(value)")
+            String(localized: "第 \(line) 行的加密 DNS 地址无效：\(value)", locale: AppLocalization.locale)
         case .invalidTestURL(let value, let line):
-            String(localized: "第 \(line) 行的测试地址无效：\(value)")
+            String(localized: "第 \(line) 行的测试地址无效：\(value)", locale: AppLocalization.locale)
         }
     }
 }
@@ -46,7 +46,7 @@ struct RuleSchemeTextEditorService {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
             throw RuleSchemeTextValidationError.invalidConfiguration(
-                message: String(localized: "配置内容不能为空")
+                message: String(localized: "配置内容不能为空", locale: AppLocalization.locale)
             )
         }
 
@@ -63,7 +63,7 @@ struct RuleSchemeTextEditorService {
         } catch {
             throw RuleSchemeTextValidationError.invalidConfiguration(
                 message: (error as? LocalizedError)?.errorDescription
-                    ?? String(localized: "配置无法识别")
+                    ?? String(localized: "配置无法识别", locale: AppLocalization.locale)
             )
         }
 

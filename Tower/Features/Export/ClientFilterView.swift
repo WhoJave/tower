@@ -704,7 +704,7 @@ struct ClientFilterView: View {
     private func destinationName(_ destination: ExportDestination) -> String {
         switch destination {
         case .client(let target): target.name
-        case .lanSharing: String(localized: "局域网共享")
+        case .lanSharing: String(localized: "局域网共享", locale: AppLocalization.locale)
         }
     }
 }

@@ -832,7 +832,7 @@ enum ConfigurationEditorTextViewFactory {
         textView.smartDashesType = .no
         textView.smartQuotesType = .no
         textView.spellCheckingType = .no
-        textView.accessibilityLabel = String(localized: "规则配置文本")
+        textView.accessibilityLabel = String(localized: "规则配置文本", locale: AppLocalization.locale)
         textView.accessibilityIdentifier = "rule-scheme-configuration-editor"
         return editor
     }

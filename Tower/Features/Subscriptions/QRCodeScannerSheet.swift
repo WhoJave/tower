@@ -53,7 +53,7 @@ struct QRCodeScannerPreview: View {
                     TowerUnavailableView(
                         "无法使用相机扫码",
                         systemImage: "camera.fill",
-                        description: Text(failure ?? String(localized: "请检查相机权限，或切换到粘贴识别。"))
+                        description: Text(failure ?? String(localized: "请检查相机权限，或切换到粘贴识别。", locale: AppLocalization.locale))
                     )
                     HStack {
                         Button("重试") { retry() }

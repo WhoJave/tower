@@ -59,7 +59,7 @@ struct TailnetConfigurationWriter {
             let names = exports.map(\.connection.policyName).joined(separator: "、")
             return configuration.replacing(
                 content: configuration.content,
-                appendingDiagnostics: [String(localized: "\(target.name) 不支持 Tailscale，已跳过“\(names)”。")]
+                appendingDiagnostics: [String(localized: "\(target.name) 不支持 Tailscale，已跳过“\(names)”。", locale: AppLocalization.locale)]
             )
         }
         var content = configuration.content
@@ -87,7 +87,7 @@ struct TailnetConfigurationWriter {
         guard flavor != .surge else { return [] }
         var notes: [String] = []
         if export.authKey == nil {
-            notes.append(String(localized: "“\(name)”没有 Auth Key：\(target.name) 暂时不能在客户端里登录 Tailscale，请在塔台里填写 Auth Key。"))
+            notes.append(String(localized: "“\(name)”没有 Auth Key：\(target.name) 暂时不能在客户端里登录 Tailscale，请在塔台里填写 Auth Key。", locale: AppLocalization.locale))
         }
         if flavor == .stash {
             notes.append(stashNote(export: export, name: name))
@@ -101,9 +101,9 @@ struct TailnetConfigurationWriter {
     /// IP first and does.
     private func stashNote(export: TailnetExport, name: String) -> String {
         guard let suffix = export.connection.magicDNSSuffix else {
-            return String(localized: "“\(name)”没有填 MagicDNS 后缀：Stash 默认跳过 Tailscale 地址段，只能通过设备名访问，请在塔台里填写后缀。")
+            return String(localized: "“\(name)”没有填 MagicDNS 后缀：Stash 默认跳过 Tailscale 地址段，只能通过设备名访问，请在塔台里填写后缀。", locale: AppLocalization.locale)
         }
-        return String(localized: "Stash 默认跳过 Tailscale 地址段和局域网网段：请用“设备名.\(suffix)”访问“\(name)”；按 IP 或访问家里子网，需要先在 Stash 的跳过代理和跳过路由中移除对应网段。")
+        return String(localized: "Stash 默认跳过 Tailscale 地址段和局域网网段：请用“设备名.\(suffix)”访问“\(name)”；按 IP 或访问家里子网，需要先在 Stash 的跳过代理和跳过路由中移除对应网段。", locale: AppLocalization.locale)
     }
 
     private func routes(for connection: TailnetConnection) -> (domains: [String], ipv4: [String], ipv6: [String]) {
