@@ -1,5 +1,5 @@
 import Foundation
-import Observation
+import Combine
 import os
 
 enum RuleGroupRenameError: LocalizedError {
@@ -37,45 +37,44 @@ enum PersistencePolicy {
 }
 
 @MainActor
-@Observable
-final class AppModel {
+final class AppModel: ObservableObject {
     static let defaultRuleSchemeID = "acl4ssr-default"
 
     // Defaults so `apply(_:)` can be an instance method: a class cannot call
     // one until every stored property is initialised.
-    var subscriptions: [SubscriptionSource] = [] {
+    @Published var subscriptions: [SubscriptionSource] = [] {
         didSet { nodeSelectionCache = nil }
     }
-    var nodes: [ProxyNode] = [] {
+    @Published var nodes: [ProxyNode] = [] {
         didSet {
             countryResolutionNodeServers = nil
             nodeSelectionCache = nil
         }
     }
-    @ObservationIgnored private var countryResolutionNodeServers: [UUID: String]?
+    private var countryResolutionNodeServers: [UUID: String]?
 
-    var selectedPresetID: String = AppModel.defaultRuleSchemeID
+    @Published var selectedPresetID: String = AppModel.defaultRuleSchemeID
     /// The client being viewed. A device-local preference: remembered in
     /// UserDefaults, never saved to the snapshot or synced — browsing clients
     /// used to write the whole state and schedule an iCloud sync.
-    var selectedTarget: ClientTarget = .surge {
+    @Published var selectedTarget: ClientTarget = .surge {
         didSet {
             guard !isDemoMode, oldValue != selectedTarget else { return }
             UserDefaults.standard.set(selectedTarget.rawValue, forKey: clientSelectionKey)
         }
     }
     /// What snapshots carry for older builds: the value loaded, not the browsing.
-    @ObservationIgnored private var snapshotSelectedTarget: ClientTarget = .surge
-    var isReplayingMacOnboarding = false
-    var selectedTab: AppTab = .subscriptions {
+    private var snapshotSelectedTarget: ClientTarget = .surge
+    @Published var isReplayingMacOnboarding = false
+    @Published var selectedTab: AppTab = .subscriptions {
         didSet {
             pendingRulesNavigation?.cancel()
             pendingRulesNavigation = nil
             isRulesNavigationPending = false
         }
     }
-    private var isRulesNavigationPending = false
-    @ObservationIgnored private var pendingRulesNavigation: Task<Void, Never>?
+    @Published private var isRulesNavigationPending = false
+    private var pendingRulesNavigation: Task<Void, Never>?
 
     /// A cold rules page must have its final statistics before it is visible.
     /// Keep the current tab interactive while the shared background work finishes.
@@ -103,9 +102,9 @@ final class AppModel {
             }
         }
     }
-    var refreshingSourceIDs: Set<UUID> = []
-    var subscriptionRefreshProgress: SubscriptionRefreshProgress?
-    @ObservationIgnored private var presentedSubscriptionRefreshTask: Task<Void, Never>?
+    @Published var refreshingSourceIDs: Set<UUID> = []
+    @Published var subscriptionRefreshProgress: SubscriptionRefreshProgress?
+    private var presentedSubscriptionRefreshTask: Task<Void, Never>?
 
     struct SubscriptionRefreshProgress {
         let id = UUID()
@@ -117,36 +116,36 @@ final class AppModel {
             String(localized: "正在刷新订阅（\(completedIDs.count)/\(sourceIDs.count)）")
         }
     }
-    var nodeLatencies: [UUID: NodeLatencyMeasurement] = [:]
-    var latencyTestingNodeIDs: Set<UUID> = []
-    var selectedLatencyTestMode: NodeLatencyTestMode = .automatic
-    var nodeIPCountryCodes: [UUID: String] = [:]
-    var nodeNetworkOrganizations: [UUID: [NetworkOrganization]] = [:]
-    @ObservationIgnored private var countryResolutionDates: [UUID: Date] = [:]
-    @ObservationIgnored private var countryResolutionGeneration = 0
-    var countryResolutionCompletedNodeIDs: Set<UUID> = []
-    var toast: ToastMessage?
-    var subscriptionRefreshReport: SubscriptionRefreshReport?
+    @Published var nodeLatencies: [UUID: NodeLatencyMeasurement] = [:]
+    @Published var latencyTestingNodeIDs: Set<UUID> = []
+    @Published var selectedLatencyTestMode: NodeLatencyTestMode = .automatic
+    @Published var nodeIPCountryCodes: [UUID: String] = [:]
+    @Published var nodeNetworkOrganizations: [UUID: [NetworkOrganization]] = [:]
+    private var countryResolutionDates: [UUID: Date] = [:]
+    private var countryResolutionGeneration = 0
+    @Published var countryResolutionCompletedNodeIDs: Set<UUID> = []
+    @Published var toast: ToastMessage?
+    @Published var subscriptionRefreshReport: SubscriptionRefreshReport?
     /// Batch requests are serialized and overlapping source sets join the
     /// existing work. This keeps pull-to-refresh and batch management from
     /// racing each other or reporting an in-flight source as a success.
-    @ObservationIgnored private var subscriptionRefreshBatch: SubscriptionRefreshBatch?
+    private var subscriptionRefreshBatch: SubscriptionRefreshBatch?
     /// A row refresh can overlap a batch entry point. Store the actual source
     /// operation so both callers await one fetch and receive its real result.
-    @ObservationIgnored private var sourceRefreshOperations: [UUID: SourceRefreshOperation] = [:]
-    @ObservationIgnored private var sourceUpdates = SourceUpdateCoordinator()
+    private var sourceRefreshOperations: [UUID: SourceRefreshOperation] = [:]
+    private var sourceUpdates = SourceUpdateCoordinator()
     /// The persistent service credential is deliberately unrelated to every
     /// airport URL. Only this random token appears in LAN sharing links.
-    var lanSharingToken = LANSubscriptionAccessTokenStore.loadOrCreate()
-    var lanSharingURL: URL?
-    var isLANSharingStarting = false
-    var renewalRemindersEnabled = false
-    var isUpdatingRenewalReminders = false
-    @ObservationIgnored private let clientPlatform: ClientPlatform
-    @ObservationIgnored private var savedPhoneClientPreferences: ClientPlatformPreferences?
-    @ObservationIgnored private var savedMacClientPreferences: ClientPlatformPreferences?
-    var clientOrder = ClientTargetOrder.defaultOrder
-    private(set) var visibleClientTargets = Set(ClientTargetOrder.defaultOrder)
+    @Published var lanSharingToken = LANSubscriptionAccessTokenStore.loadOrCreate()
+    @Published var lanSharingURL: URL?
+    @Published var isLANSharingStarting = false
+    @Published var renewalRemindersEnabled = false
+    @Published var isUpdatingRenewalReminders = false
+    private let clientPlatform: ClientPlatform
+    private var savedPhoneClientPreferences: ClientPlatformPreferences?
+    private var savedMacClientPreferences: ClientPlatformPreferences?
+    @Published var clientOrder = ClientTargetOrder.defaultOrder
+    @Published private(set) var visibleClientTargets = Set(ClientTargetOrder.defaultOrder)
     var visibleClientOrder: [ClientTarget] {
         clientOrder.filter(visibleClientTargets.contains)
     }
@@ -154,8 +153,8 @@ final class AppModel {
         clientOrder.filter { !visibleClientTargets.contains($0) }
     }
     /// Canonical position among every client, including currently hidden ones.
-    var lanSharingOrderIndex = ExportDestinationOrder.defaultLANSharingIndex
-    var isLANSharingVisible = true
+    @Published var lanSharingOrderIndex = ExportDestinationOrder.defaultLANSharingIndex
+    @Published var isLANSharingVisible = true
     private var fullExportDestinationOrder: [ExportDestination] {
         ExportDestinationOrder.combined(
             clientOrder: clientOrder,
@@ -168,118 +167,118 @@ final class AppModel {
     var hiddenExportDestinationOrder: [ExportDestination] {
         fullExportDestinationOrder.filter { !isExportDestinationVisible($0) }
     }
-    var appendSubscriptionNameToNodes = false
-    var filterSubscriptionInfoNodes = false {
+    @Published var appendSubscriptionNameToNodes = false
+    @Published var filterSubscriptionInfoNodes = false {
         didSet { nodeSelectionCache = nil }
     }
     /// Refresh enabled subscriptions when the app opens. Off by default like
     /// every other feature here that reaches the network — the promise the app
     /// makes on first launch is that it goes online when you say so.
-    var autoRefreshOnOpen = false
-    @ObservationIgnored private var lastAutoRefreshAt: Date?
-    var configurationName = TowerBrand.localizedName
-    var preferRuleSets = false
-    private var preferRuleSetsWasExplicitlySet = false
+    @Published var autoRefreshOnOpen = false
+    private var lastAutoRefreshAt: Date?
+    @Published var configurationName = TowerBrand.localizedName
+    @Published var preferRuleSets = false
+    @Published private var preferRuleSetsWasExplicitlySet = false
     /// Off by default because enabling it places credential-bearing airport
     /// URLs in the profile handed to another app.
-    var embedRemoteSubscriptionLinks = false
-    var exportContentModes: [ClientTarget: ExportContentMode] = [:]
+    @Published var embedRemoteSubscriptionLinks = false
+    @Published var exportContentModes: [ClientTarget: ExportContentMode] = [:]
     /// Schemes the user imported by URL. The bundled ACL4SSR ones live in the
     /// app bundle and are added by `ruleSchemes`.
-    var importedSchemes: [RuleScheme] = []
+    @Published var importedSchemes: [RuleScheme] = []
     /// A missing scheme id means "follow the source exactly". Once the user
     /// changes a checkbox we keep the explicit set separately from the
     /// downloaded scheme, so refreshing that scheme cannot undo the choice.
-    var selectedRuleGroups: [String: Set<String>] = [:]
+    @Published var selectedRuleGroups: [String: Set<String>] = [:]
     /// Per-scheme group order, selection mode and candidate policies. This is
     /// deliberately separate from imported rules so an upstream refresh never
     /// destroys local customization.
-    var ruleSchemeCustomizations: [String: RuleSchemeCustomization] = [:]
+    @Published var ruleSchemeCustomizations: [String: RuleSchemeCustomization] = [:]
     /// Missing means follow the source and show its emoji. Only explicit
     /// overrides are persisted so newly imported schemes retain their design.
-    var ruleGroupEmojisEnabled: [String: Bool] = [:]
+    @Published var ruleGroupEmojisEnabled: [String: Bool] = [:]
     /// Schemes whose groups without an emoji get a recognised one. Only `true`
     /// is stored: on for new imports, off for schemes that existed before, so
     /// renaming never changes a client's selected groups without a choice.
-    var ruleGroupEmojiAutofill: [String: Bool] = [:]
-    var excludedNodeIDs: Set<UUID> = [] {
+    @Published var ruleGroupEmojiAutofill: [String: Bool] = [:]
+    @Published var excludedNodeIDs: Set<UUID> = [] {
         didSet { nodeSelectionCache = nil }
     }
-    var nodeExportNameFilter: NodeExportNameFilter? {
+    @Published var nodeExportNameFilter: NodeExportNameFilter? {
         didSet { nodeSelectionCache = nil }
     }
     /// User-owned rule contents are kept independently from the schemes in
     /// which they are currently active.
-    var localRuleSets: [LocalRuleSet] = []
+    @Published var localRuleSets: [LocalRuleSet] = []
     /// Per-scheme placement, routing and enablement for local and catalog rules.
-    var customRuleFlows: [CustomRuleFlow] = []
+    @Published var customRuleFlows: [CustomRuleFlow] = []
     /// Tailnets written into complete profiles. Synced; their auth keys are not.
-    var tailnets: [TailnetConnection] = []
+    @Published var tailnets: [TailnetConnection] = []
     /// Which tailnets have an auth key in this device's Keychain. Observed so
     /// the editor can say so without reading the key back into the view.
-    private(set) var tailnetsWithAuthKey: Set<UUID> = []
-    @ObservationIgnored private var tailnetAuthKeys: any TailnetAuthKeyStoring = InMemoryTailnetAuthKeyStore()
+    @Published private(set) var tailnetsWithAuthKey: Set<UUID> = []
+    private var tailnetAuthKeys: any TailnetAuthKeyStoring = InMemoryTailnetAuthKeyStore()
     /// Bumped on every key change so cached profiles are rebuilt.
-    @ObservationIgnored private var tailnetAuthKeyRevision = 0
-    var importingSchemeIDs: Set<String> = []
-    private(set) var isImportingScheme = false
-    @ObservationIgnored private var ruleOperationGeneration = UUID()
-    @ObservationIgnored private var ruleImportToken: UUID?
-    @ObservationIgnored private var localRuleSaveTokens: [UUID: UUID] = [:]
+    private var tailnetAuthKeyRevision = 0
+    @Published var importingSchemeIDs: Set<String> = []
+    @Published private(set) var isImportingScheme = false
+    private var ruleOperationGeneration = UUID()
+    private var ruleImportToken: UUID?
+    private var localRuleSaveTokens: [UUID: UUID] = [:]
     /// Protocols the user chose not to write, per client. A client may support
     /// a protocol while the user's licence does not — Surge needs a paid tier
     /// for AnyTLS — and Tower cannot detect that, so it is a manual choice.
-    var excludedKinds: [ClientTarget: Set<ProxyKind>] = [:]
+    @Published var excludedKinds: [ClientTarget: Set<ProxyKind>] = [:]
 
     private let persistence: PersistenceStore
-    var cloudSyncIssue: String?
-    var cloudRecoveryCopies: [CloudRecoveryCopy] = []
-    var isLoadingCloudRecoveryCopies = false
-    @ObservationIgnored private var cloudRecoveryLoadID = UUID()
-    @ObservationIgnored private var performedForegroundOpenWork = false
+    @Published var cloudSyncIssue: String?
+    @Published var cloudRecoveryCopies: [CloudRecoveryCopy] = []
+    @Published var isLoadingCloudRecoveryCopies = false
+    private var cloudRecoveryLoadID = UUID()
+    private var performedForegroundOpenWork = false
     private let cloudSync: any CloudSnapshotSyncing
-    @ObservationIgnored private var cloudSyncGeneration = UUID()
+    private var cloudSyncGeneration = UUID()
     /// Off until the user turns it on. Enabling it is the moment subscription
     /// URLs and node passwords first leave the device, so it is never a
     /// default and never silently re-enabled.
-    private(set) var iCloudSyncEnabled = CloudSyncPreference.isEnabled()
-    private(set) var isCloudSyncing = false
-    private(set) var isRemovingCloudSnapshot = false
-    private(set) var lastCloudSyncAt: Date?
+    @Published private(set) var iCloudSyncEnabled = CloudSyncPreference.isEnabled()
+    @Published private(set) var isCloudSyncing = false
+    @Published private(set) var isRemovingCloudSnapshot = false
+    @Published private(set) var lastCloudSyncAt: Date?
     /// `CloudSnapshotMerge.signature` of what this device last agreed with
     /// iCloud. An edit whose signature matches has nothing to sync.
-    @ObservationIgnored private var lastSyncedCloudSignature: Data?
+    private var lastSyncedCloudSignature: Data?
     /// Returning to the foreground checks iCloud at most this often; edits
     /// still upload on their own and 立即同步 always runs.
-    @ObservationIgnored private let cloudForegroundCheckInterval: TimeInterval
+    private let cloudForegroundCheckInterval: TimeInterval
     /// Groups a burst of edits (reordering, several toggles) into one sync.
     private static let cloudUploadDelay: Duration = .seconds(5)
     /// After a failed sync, edits wait this long before retrying on their own,
     /// so a stuck iCloud download is not re-attempted after every save.
     private static let cloudFailureBackoff: TimeInterval = 600
-    @ObservationIgnored private var lastCloudSyncFailureAt: Date?
-    @ObservationIgnored private var compactedLocalBackups = false
+    private var lastCloudSyncFailureAt: Date?
+    private var compactedLocalBackups = false
     /// `state.json` exists but could not even be read at launch: protected
     /// data is unavailable before first unlock, and iOS can prewarm Tower
     /// then. Until it is read or kept aside, nothing may replace it, and the
     /// empty state must not sync to iCloud as if everything had been deleted.
-    @ObservationIgnored private var launchSnapshotUnread = false
+    private var launchSnapshotUnread = false
     /// Why and how each sync ran, never what was synced: no names, links or
     /// credentials. Visible in Console and in Instruments' os_log table.
     private static let cloudLog = Logger(subsystem: "com.jzb.tower", category: "CloudSync")
-    @ObservationIgnored private var cloudUploadTask: Task<Void, Never>?
+    private var cloudUploadTask: Task<Void, Never>?
     /// When the state now in memory was last edited. Readable so a test can
     /// confirm a launch restores it: dropping it is what let an older iCloud
     /// snapshot win and overwrite a local edit.
-    @ObservationIgnored private(set) var lastLocalEditAt: Date?
+    private(set) var lastLocalEditAt: Date?
     private let subscriptionService: any SubscriptionFetching
     private let ruleRepository: RuleRepository
     private let schemeRepository: RuleSchemeRepository
     private let schemeImportService: RuleSchemeImportService
     private let downloadStore: RuleDownloadStore
     private let exportService: ExportFileService
-    @ObservationIgnored private var latencyOperations: [UUID: Task<Void, Never>] = [:]
-    @ObservationIgnored private var latencyGeneration = UUID()
+    private var latencyOperations: [UUID: Task<Void, Never>] = [:]
+    private var latencyGeneration = UUID()
     private let latencyService: NodeLatencyService
     private let ipCountryLookupService: IPCountryLookupService
     private let reminderScheduler: any SubscriptionReminderScheduling
@@ -291,8 +290,8 @@ final class AppModel {
     private static let resolvedHostCountryCodeTTL: TimeInterval = 86_400
     /// A node with no country is asked again after this, not every 30 s.
     private static let unresolvedCountryRetryInterval: TimeInterval = 600
-    @ObservationIgnored private var generationCache = ConfigurationCache()
-    @ObservationIgnored private(set) var configurationGenerationCount = 0
+    private var generationCache = ConfigurationCache()
+    private(set) var configurationGenerationCount = 0
 
     // Snapshot comparisons reuse Array/Dictionary copy-on-write storage. Cache hits
     // still read every observable input, so SwiftUI never loses invalidations.
@@ -324,9 +323,9 @@ final class AppModel {
         let mode: ExportContentMode
         let supportedKinds: Set<ProxyKind>?
     }
-    @ObservationIgnored private var requestInputs: RequestInputs?
-    @ObservationIgnored private var requestCache: [RequestVariant: ConfigurationRequest] = [:]
-    @ObservationIgnored private(set) var configurationRequestPreparationCount = 0
+    private var requestInputs: RequestInputs?
+    private var requestCache: [RequestVariant: ConfigurationRequest] = [:]
+    private(set) var configurationRequestPreparationCount = 0
 
     private struct NodeSelectionInputs: Equatable {
         let nodes: [ProxyNode]
@@ -345,7 +344,7 @@ final class AppModel {
         /// `enabled`'s ids, so callers testing many nodes do set lookups.
         let enabledIDs: Set<UUID>
     }
-    @ObservationIgnored private var nodeSelectionCache: (NodeSelectionInputs, NodeSelection)?
+    private var nodeSelectionCache: (NodeSelectionInputs, NodeSelection)?
     private var nodeSelection: NodeSelection {
         let inputs = NodeSelectionInputs(nodes: nodes, sources: subscriptions,
                                          excluded: excludedNodeIDs, filterInfo: filterSubscriptionInfoNodes,
@@ -385,8 +384,8 @@ final class AppModel {
         let ids: [UUID]
         let names: [String]
     }
-    @ObservationIgnored private var nodeNameMatchCache: (NodeNameMatchInputs, Set<UUID>, String?)?
-    @ObservationIgnored private(set) var nodeNameFilterEvaluationCount = 0
+    private var nodeNameMatchCache: (NodeNameMatchInputs, Set<UUID>, String?)?
+    private(set) var nodeNameFilterEvaluationCount = 0
 
     private func nodeNameMatches(for filter: NodeExportNameFilter, in available: [ProxyNode]) -> (Set<UUID>, String?) {
         let inputs = NodeNameMatchInputs(filter: filter, ids: available.map(\.id), names: available.map(\.name))
@@ -407,7 +406,7 @@ final class AppModel {
         nodeNameMatchCache = (inputs, result.0, result.1)
         return result
     }
-    @ObservationIgnored private var countryCountCache: ([ProxyNode], [UUID: String], Int)?
+    private var countryCountCache: ([ProxyNode], [UUID: String], Int)?
 
     private struct SubscriptionRefreshBatch {
         let id: UUID
@@ -422,7 +421,7 @@ final class AppModel {
     /// The rules page shows every scheme's total at once. Re-materializing all
     /// schemes and re-reading imported lists whenever only the selected id
     /// changes makes a simple mode switch block the main actor.
-    @ObservationIgnored private var schemeRuleCountCache: [String: Int] = [:]
+    private var schemeRuleCountCache: [String: Int] = [:]
     /// What the cached rule counts were computed from. A count only depends on
     /// a scheme's rule lists; toggling a node or editing a subscription used to
     /// clear every count and re-read (and, for domain sets, re-transform)
@@ -433,7 +432,7 @@ final class AppModel {
         let flows: [CustomRuleFlow]
         let localRuleSets: [LocalRuleSet]
     }
-    @ObservationIgnored private var ruleCountInputs: RuleCountInputs?
+    private var ruleCountInputs: RuleCountInputs?
     /// What the materialized and customizable schemes are built from. Every
     /// save used to drop both caches, so any toggle rebuilt every scheme card
     /// on the rules screen and the export request, re-reading all rule lists:
@@ -444,7 +443,7 @@ final class AppModel {
         let emojis: [String: Bool]
         let emojiAutofill: [String: Bool]
     }
-    @ObservationIgnored private var rulePresentationInputs: RulePresentationInputs?
+    private var rulePresentationInputs: RulePresentationInputs?
 
     private func currentRulePresentationInputs() -> RulePresentationInputs {
         RulePresentationInputs(
@@ -471,44 +470,44 @@ final class AppModel {
         rulePresentationInputs = presentation
         ruleCountInputs = presentation.counts
     }
-    private(set) var ruleSchemePresentationRevision = 0
-    private var preparedRulesPageRevision: Int?
+    @Published private(set) var ruleSchemePresentationRevision = 0
+    @Published private var preparedRulesPageRevision: Int?
     private typealias PreparedRulesPage = (
         [String: RuleScheme], [String: RuleScheme], [String: Int],
         [String: RuleSchemePageSummary], [String: Int]
     )
-    @ObservationIgnored private var rulesPagePreparation: (revision: Int, task: Task<PreparedRulesPage, Error>)?
+    private var rulesPagePreparation: (revision: Int, task: Task<PreparedRulesPage, Error>)?
 
     var isRulesPagePrepared: Bool { preparedRulesPageRevision == ruleSchemePresentationRevision }
-    private(set) var rulesPageSummaries: [String: RuleSchemePageSummary] = [:]
-    private(set) var rulesPagePresetCounts: [String: Int] = [:]
-    @ObservationIgnored private var customizableSchemeCache: [String: RuleScheme] = [:]
-    @ObservationIgnored private var materializedSchemeCache: [String: RuleScheme] = [:]
+    @Published private(set) var rulesPageSummaries: [String: RuleSchemePageSummary] = [:]
+    @Published private(set) var rulesPagePresetCounts: [String: Int] = [:]
+    private var customizableSchemeCache: [String: RuleScheme] = [:]
+    private var materializedSchemeCache: [String: RuleScheme] = [:]
     /// Test-visible instrumentation proving that selection-only renders reuse
     /// the already materialized rule presentation.
-    @ObservationIgnored private(set) var ruleSchemeMaterializationCount = 0
-    @ObservationIgnored private var countryResolutionInFlightNodeIDs: Set<UUID> = []
-    @ObservationIgnored private var countryResolutionInFlightHosts: [UUID: String] = [:]
+    private(set) var ruleSchemeMaterializationCount = 0
+    private var countryResolutionInFlightNodeIDs: Set<UUID> = []
+    private var countryResolutionInFlightHosts: [UUID: String] = [:]
     /// Rows that have asked for their country and are waiting to be resolved as
     /// one batch rather than one request each.
-    @ObservationIgnored private var pendingCountryResolutionNodes: [UUID: ProxyNode] = [:]
-    @ObservationIgnored private var countryResolutionDrainTask: Task<Void, Never>?
+    private var pendingCountryResolutionNodes: [UUID: ProxyNode] = [:]
+    private var countryResolutionDrainTask: Task<Void, Never>?
     /// Country codes already resolved, keyed by host so they survive the node
     /// ids being regenerated on every refresh. Persisted, so a cold launch does
     /// not repeat a DNS lookup for every node the offline database already
     /// answered for. Not observed: it only ever feeds `nodeIPCountryCodes`.
-    @ObservationIgnored private var resolvedHostCountryCodes: [String: String] = [:]
-    @ObservationIgnored private var resolvedHostCountryCodeUpdatedAt: [String: Date] = [:]
-    @ObservationIgnored private var lanSharingGeneration = UUID()
-    @ObservationIgnored private var lanSubscriptionServer: LANSubscriptionServer?
-    @ObservationIgnored private let lanBackgroundLease: LANSharingBackgroundLease
-    @ObservationIgnored private var lanSharingOutsideForeground = false
-    @ObservationIgnored private let persistencePolicy: PersistencePolicy
-    @ObservationIgnored private var pendingPersistenceUpdatedAt: Date?
-    @ObservationIgnored private var persistTask: Task<Void, Never>?
+    private var resolvedHostCountryCodes: [String: String] = [:]
+    private var resolvedHostCountryCodeUpdatedAt: [String: Date] = [:]
+    private var lanSharingGeneration = UUID()
+    private var lanSubscriptionServer: LANSubscriptionServer?
+    private let lanBackgroundLease: LANSharingBackgroundLease
+    private var lanSharingOutsideForeground = false
+    private let persistencePolicy: PersistencePolicy
+    private var pendingPersistenceUpdatedAt: Date?
+    private var persistTask: Task<Void, Never>?
     /// Test-visible instrumentation for the interaction contract: coalesced
     /// edits return before Tower walks the complete state into a snapshot.
-    @ObservationIgnored private(set) var persistenceSnapshotBuildCount = 0
+    private(set) var persistenceSnapshotBuildCount = 0
 
     init(
         persistence: PersistenceStore = PersistenceStore(),
