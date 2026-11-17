@@ -37,6 +37,7 @@ For a physical iOS 16.7.x iPhone, select the device in Xcode, provide your own d
 
 1. **Not verified by Xcode or device tests** in the environment where this branch was prepared. A GitHub commit is not proof of a successful iOS 16 build.
 2. `ObservableObject` invalidates more views than Observation's fine-grained tracking; profile with 1,000/5,000 nodes, particularly on older devices.
-3. The backported two-value `onChange` uses a stateful modifier and can differ from iOS 17's timing on view identity changes. Validate sheet presentation and background transitions.
-4. This branch is based on the already-existing fork's main commit, not the newer upstream main. Syncing upstream later may require conflict resolution and repeating availability checks.
-5. To install an iOS 16-compatible app, lowering the deployment target is not enough; an Xcode build, code signing and device launch are still required.
+3. On iOS 16, native swipe rows are always kept alive because geometry-based scroll viewport bounds need iOS 17; check scrolling performance on older iPhones.
+4. The backported two-value `onChange` uses a stateful modifier and can differ from iOS 17's timing on view identity changes. Validate sheet presentation and background transitions.
+5. This branch is based on the already-existing fork's main commit, not the newer upstream main. Syncing upstream later may require conflict resolution and repeating availability checks.
+6. To install an iOS 16-compatible app, lowering the deployment target is not enough; an Xcode build, code signing and device launch are still required.

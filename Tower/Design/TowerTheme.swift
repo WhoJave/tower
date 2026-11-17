@@ -598,11 +598,17 @@ struct CardSwipeDeletion: ViewModifier {
                 }
                 .clipped()
                 .onGeometryChange(for: Bool?.self) { geometry in
-                    guard let viewport = geometry.bounds(of: .scrollView) else { return true }
-                    // Keep the last visibility through transient zero-size layouts.
-                    guard viewport.width > 0, viewport.height > 0 else { return nil }
-                    let preheatedViewport = viewport.insetBy(dx: 0, dy: -viewport.height)
-                    return preheatedViewport.intersects(CGRect(origin: .zero, size: geometry.size))
+                    if #available(iOS 17.0, *) {
+                        guard let viewport = geometry.bounds(of: .scrollView) else { return true }
+                        // Keep the last visibility through transient zero-size layouts.
+                        guard viewport.width > 0, viewport.height > 0 else { return nil }
+                        let preheatedViewport = viewport.insetBy(dx: 0, dy: -viewport.height)
+                        return preheatedViewport.intersects(CGRect(origin: .zero, size: geometry.size))
+                    } else {
+                        // Named scroll view bounds start in iOS 17.
+                        // Keep the native swipe row available on iOS 16.
+                        return true
+                    }
                 } action: { isNear in
                     if let isNear { isNearScrollViewport = isNear }
                 }
