@@ -288,6 +288,31 @@ final class LocalizationTests: XCTestCase {
         }
     }
 
+    func testLanguagePreferenceOverridesSystemLocale() {
+        XCTAssertEqual(AppLocalization.locale(for: "zh-Hans").language.languageCode?.identifier, "zh")
+        XCTAssertEqual(AppLocalization.locale(for: "en").language.languageCode?.identifier, "en")
+        XCTAssertEqual(AppLocalization.locale(for: "zh-Hans").identifier, "zh-Hans")
+        XCTAssertEqual(AppLocalization.locale(for: "en").identifier, "en")
+    }
+
+    func testSystemLanguagePreferencePreservesSystemLocalization() {
+        let expected = Bundle.main.preferredLocalizations.first
+            .map(Locale.init(identifier:)) ?? .autoupdatingCurrent
+        XCTAssertEqual(AppLocalization.locale(for: "system").identifier, expected.identifier)
+        XCTAssertEqual(AppLocalization.locale(for: "unknown").identifier, expected.identifier)
+    }
+
+    func testInAppLanguageSelectorStringsHaveChineseAndEnglishTranslations() throws {
+        let catalog = try loadCatalog(named: "LanguageSettings")
+        let strings = try XCTUnwrap(catalog["strings"] as? [String: Any])
+        for key in ["Language", "App language", "Choose the language used in Tower.", "Follow System"] {
+            let item = try XCTUnwrap(strings[key] as? [String: Any])
+            let localizations = try XCTUnwrap(item["localizations"] as? [String: Any])
+            XCTAssertNotNil(localizations["en"], key)
+            XCTAssertNotNil(localizations["zh-Hans"], key)
+        }
+    }
+
     func testRegionNamesFollowTheSelectedAppLocale() {
         XCTAssertEqual(
             AppLocalization.regionName(for: "JP", locale: Locale(identifier: "en")),

@@ -1,14 +1,30 @@
 import Foundation
 
-/// The language selected for Tower can differ from the device language through
-/// Settings > Apps > Tower > Language. Foundation's bundle preference is the
-/// authoritative value for that per-app choice.
+/// Preferred UI language inside Tower. "system" preserves Apple's per-app
+/// language selection (Settings > Apps > Tower > Language) and all other
+/// languages already shipped in the main string catalog.
 enum AppLocalization {
+    static let languagePreferenceKey = "tower.preferredLanguage"
+    static let systemLanguagePreference = "system"
+    static let simplifiedChinesePreference = "zh-Hans"
+    static let englishPreference = "en"
+
     static var locale: Locale {
-        guard let identifier = Bundle.main.preferredLocalizations.first else {
-            return .autoupdatingCurrent
+        locale(for: UserDefaults.standard.string(forKey: languagePreferenceKey))
+    }
+
+    static func locale(for preference: String?) -> Locale {
+        switch preference {
+        case simplifiedChinesePreference:
+            return Locale(identifier: simplifiedChinesePreference)
+        case englishPreference:
+            return Locale(identifier: englishPreference)
+        default:
+            guard let identifier = Bundle.main.preferredLocalizations.first else {
+                return .autoupdatingCurrent
+            }
+            return Locale(identifier: identifier)
         }
-        return Locale(identifier: identifier)
     }
 
     static func regionName(

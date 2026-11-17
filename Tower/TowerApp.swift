@@ -8,11 +8,14 @@ struct TowerApp: App {
     @StateObject private var model = AppModel(persistencePolicy: .coalesced(.milliseconds(250)))
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage("hasSeenWelcome") private var hasSeenWelcome = false
+    @AppStorage(AppLocalization.languagePreferenceKey)
+    private var preferredLanguage = AppLocalization.systemLanguagePreference
 
     var body: some Scene {
         WindowGroup {
             AppRootView()
                 .environmentObject(model)
+                .environment(\.locale, AppLocalization.locale(for: preferredLanguage))
                 .onAppear {
                     #if targetEnvironment(macCatalyst)
                     for scene in UIApplication.shared.connectedScenes {

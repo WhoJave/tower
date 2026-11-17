@@ -19,6 +19,7 @@ struct SettingsView: View {
                 }
                 .padding(17).towerCard()
                 NodeAndExportSettingsCard(configurationNameDraft: $configurationNameDraft)
+                LanguageSettingsCard()
                 VStack(alignment: .leading, spacing: 16) {
                     SectionHeading(title: "连接")
                     TailnetSettingsRow()
@@ -61,6 +62,51 @@ struct SettingsView: View {
         .fullScreenCover(isPresented: $showsOnboarding) {
             WelcomeView { showsOnboarding = false }
         }
+    }
+}
+
+/// Language is a UI preference, separate from subscriptions and cloud sync.
+/// The selected locale is injected by TowerApp so SwiftUI's string catalogs
+/// update without replacing the navigation stack or discarding app state.
+private struct LanguageSettingsCard: View {
+    @AppStorage(AppLocalization.languagePreferenceKey)
+    private var preferredLanguage = AppLocalization.systemLanguagePreference
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("Language", tableName: "LanguageSettings")
+                .font(.headline)
+
+            HStack(spacing: 13) {
+                SettingsIconTile(symbol: "globe", color: .indigo)
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("App language", tableName: "LanguageSettings")
+                        .font(.body)
+                    Text("Choose the language used in Tower.", tableName: "LanguageSettings")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                Picker(selection: $preferredLanguage) {
+                    Text("Follow System", tableName: "LanguageSettings")
+                        .tag(AppLocalization.systemLanguagePreference)
+                    Text(verbatim: "简体中文")
+                        .tag(AppLocalization.simplifiedChinesePreference)
+                    Text(verbatim: "English")
+                        .tag(AppLocalization.englishPreference)
+                } label: {
+                    Text("App language", tableName: "LanguageSettings")
+                }
+                .labelsHidden()
+                .pickerStyle(.menu)
+                .accessibilityIdentifier("app-language-picker")
+            }
+        }
+        .padding(17)
+        .towerCard()
+        .accessibilityIdentifier("app-language-settings")
     }
 }
 
