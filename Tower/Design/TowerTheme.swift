@@ -297,7 +297,7 @@ struct MetricPill: View {
                 Text(value, format: .number)
                     .font(.title2.weight(.bold))
                     .contentTransition(
-                        reduceMotion ? .opacity : .numericText(value: Double(value))
+                        reduceMotion ? .opacity : .numericText()
                     )
                     .animation(
                         reduceMotion
@@ -392,7 +392,7 @@ struct ToastContent: View {
         }
         .accessibilityElement(children: .combine)
         .accessibilityIdentifier("tower-toast")
-        .sensoryFeedback(toast.tone == .success ? .success : .selection, trigger: toast.id)
+        .towerSensoryFeedback(toast.tone == .success ? .success : .selection, trigger: toast.id)
     }
 }
 
@@ -460,7 +460,7 @@ struct CheckmarkToggleStyle: ToggleStyle {
         .accessibilityAddTraits(.isToggle)
         // Every other choice in the app taps back — the tab bar, the rule
         // list, the client picker. This one was the exception.
-        .sensoryFeedback(.selection, trigger: configuration.isOn) { _, _ in !isSwipeSizingCopy }
+        .towerSensoryFeedback(.selection, trigger: configuration.isOn) { _, _ in !isSwipeSizingCopy }
     }
 }
 

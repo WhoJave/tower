@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Creation shares the candidate editor's navigation stack, including on Mac.
 struct CustomNodeFilterCreator: View {
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     @Environment(\.dismiss) private var dismiss
     let scheme: RuleScheme
     let onCreated: (String) -> Void
@@ -242,13 +242,13 @@ struct NodeNameFilterFields: View {
         .padding(.vertical, 4)
         // Keep synchronization on the visible field container, never a separate
         // lazy list row that might not exist when the user taps Save.
-        .onChange(of: keywords) { _, values in
+        .towerOnChange(of: keywords) { _, values in
             draft.keywords = values.map(\.value).joined(separator: "\n")
         }
-        .onChange(of: draft) { _, value in
+        .towerOnChange(of: draft) { _, value in
             pattern = value == initialDraft ? originalPattern : value.pattern
         }
-        .onChange(of: draft.style) { _, _ in
+        .towerOnChange(of: draft.style) { _, _ in
             focusedKeyword = nil
         }
     }

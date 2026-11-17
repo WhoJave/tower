@@ -3,7 +3,7 @@ import UIKit
 import UniformTypeIdentifiers
 
 struct ExportView: View {
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var surgeSchemeAvailable = false
@@ -73,7 +73,7 @@ struct ExportView: View {
                                         .font(.title2)
                                         .foregroundStyle(statusConfiguration?.hasExportableProxies == false
                                                          ? Color.orange : Color.green)
-                                        .contentTransition(.symbolEffect(.replace))
+                                        .contentTransition(.opacity)
                                         .frame(width: 28, height: 28)
                                         .opacity(statusConfiguration == nil ? 0 : showsPending ? 0.3 : 1)
                                         .accessibilityHidden(true)
@@ -188,7 +188,7 @@ struct ExportView: View {
             pendingStatusRequest = request
         }
         .onAppear { surgeSchemeAvailable = MacClientImportCapability.surgeSchemeAvailable }
-        .onChange(of: scenePhase) { _, phase in
+        .towerOnChange(of: scenePhase) { _, phase in
             if phase == .active { surgeSchemeAvailable = MacClientImportCapability.surgeSchemeAvailable }
         }
         .fileExporter(isPresented: $isSavingMacFile, document: macDocument,
@@ -264,7 +264,7 @@ struct ExportView: View {
         // down — and a name typed but never committed is simply lost. Catching
         // the flag covers every path; committing twice is harmless because the
         // draft is the same either way.
-        .onChange(of: isSettingsPresented) { _, isPresented in
+        .towerOnChange(of: isSettingsPresented) { _, isPresented in
             guard !isPresented else { return }
             // After the sheet's slide, for the same reason as its Done button.
             let name = configurationNameDraft.committedName
@@ -275,13 +275,13 @@ struct ExportView: View {
         }
         // A restore or an iCloud pull can replace the name while Settings is
         // open. Without this, closing it writes the stale draft back.
-        .onChange(of: model.configurationName) { _, name in
+        .towerOnChange(of: model.configurationName) { _, name in
             configurationNameDraft.followSavedName(name)
         }
         .fullScreenCover(item: $previewPayload) { payload in
             ConfigurationPreviewSheet(configuration: payload.configuration)
         }
-        .sensoryFeedback(.selection, trigger: selectedDestinationID)
+        .towerSensoryFeedback(.selection, trigger: selectedDestinationID)
         // Deliberately no .onDisappear teardown. Handing the link to another
         // app backgrounds Tower, and SwiftUI may call onDisappear when it does
         // — which killed the server before the client had fetched. Hiddify
@@ -488,7 +488,7 @@ private struct ExportOptionIcon: View {
 }
 
 private struct ExportAdvancedOptions: View {
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isExpanded = false
 
@@ -537,7 +537,7 @@ private struct ExportAdvancedOptions: View {
 }
 
 private struct ExportContentModePicker: View {
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
 
     var body: some View {
         if model.selectedTarget.supportedContentModes.count > 1 {
@@ -566,7 +566,7 @@ private struct ExportContentModePicker: View {
 
 private struct ExportSettingsSheet: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     @Binding var configurationNameDraft: ConfigurationNameDraft
 
     var body: some View {
@@ -605,7 +605,7 @@ private struct ConfigurationPreviewPayload: Identifiable {
 }
 
 private struct ClientPicker: View {
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.scenePhase) private var scenePhase
     @Binding var isLANSharingSelected: Bool
@@ -719,7 +719,7 @@ private struct ClientPicker: View {
                         }
                         .scrollIndicators(TowerPlatform.isMac ? .visible : .hidden)
                         .onAppear { scrollProxy.scrollTo(currentDestination.id) }
-                        .onChange(of: currentDestination) { _, destination in
+                        .towerOnChange(of: currentDestination) { _, destination in
                             guard dragSession == nil, settlingSession == nil else { return }
                             // Without an anchor, ScrollViewReader only moves enough
                             // to reveal a clipped card and leaves visible cards in place.
@@ -772,16 +772,16 @@ private struct ClientPicker: View {
             .frame(height: pickerHeight + (TowerPlatform.isMac ? 16 : 0))
         }
         .onAppear(perform: synchronizeOrder)
-        .onChange(of: model.exportDestinationOrder) { _, destinations in
+        .towerOnChange(of: model.exportDestinationOrder) { _, destinations in
             guard dragSession == nil else { return }
             orderedDestinations = destinations
         }
-        .onChange(of: scenePhase) { _, phase in
+        .towerOnChange(of: scenePhase) { _, phase in
             guard phase != .active, dragSession != nil || settlingSession != nil else { return }
             resetDragState()
             suppressSelection = false
         }
-        .sensoryFeedback(.selection, trigger: reorderFeedback)
+        .towerSensoryFeedback(.selection, trigger: reorderFeedback)
     }
 
     @ViewBuilder
@@ -1254,7 +1254,7 @@ enum ProtocolFilterPolicy {
 /// needs a paid tier for AnyTLS — and Tower cannot detect that, so the choice
 /// is offered per client and only for protocols the nodes actually contain.
 private struct ProtocolFilter: View {
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
 
     var body: some View {
         let kinds = model.filterableKinds(for: model.selectedTarget)
@@ -1320,7 +1320,7 @@ private struct ProtocolSymbolBadge: View {
 /// happens when rules added elsewhere arrive through iCloud. The notice alone
 /// left people stuck, notably on built-in schemes, whose cards had no refresh.
 private struct MissingRulesRefresh: View {
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     let scheme: RuleScheme
 
     var body: some View {
@@ -1350,7 +1350,7 @@ private struct MissingRulesRefresh: View {
 
 private struct ConversionSummary: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     let configuration: GeneratedConfiguration
 
     var body: some View {
@@ -1500,7 +1500,7 @@ private struct ConfigurationPreview: View {
 
 private struct ConfigurationPreviewSheet: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     @Environment(\.dismiss) private var dismiss
     let configuration: GeneratedConfiguration
     @State private var highlightedSpans: [ConfigurationSyntaxHighlighter.Span]?

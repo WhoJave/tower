@@ -39,7 +39,7 @@ enum RulesetPresentation {
 /// it. Changes save as they are made, like Settings, so there is no second
 /// "edit" layer to find.
 struct RuleGroupDetailView: View {
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     let scheme: RuleScheme
     @State var groupName: String
     let onDelete: (RuleSchemeGroup) -> Void
@@ -115,12 +115,12 @@ struct RuleGroupDetailView: View {
         .navigationTitle(RulePolicyPresentation.nameWithoutLeadingEmoji(groupName))
         .navigationBarTitleDisplayMode(.inline)
         .onAppear { loadDrafts() }
-        .onChange(of: group) { _, _ in loadDrafts() }
-        .onChange(of: selectedReferences) { _, _ in saveRouting() }
-        .onChange(of: selectedKind) { _, _ in
+        .towerOnChange(of: group) { _, _ in loadDrafts() }
+        .towerOnChange(of: selectedReferences) { _, _ in saveRouting() }
+        .towerOnChange(of: selectedKind) { _, _ in
             if isRoutingGroup { saveRouting() } else { saveNodeFilters() }
         }
-        .onChange(of: isEditingName) { _, editing in if !editing { commitName() } }
+        .towerOnChange(of: isEditingName) { _, editing in if !editing { commitName() } }
         .onDisappear { commitName() }
         .task(id: sources) {
             var counts: [RuleSchemeRuleset: Int] = [:]
@@ -503,7 +503,7 @@ enum RuleLineKind: CaseIterable, Hashable {
 }
 
 struct RulesetContentView: View {
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     let ruleset: RuleSchemeRuleset
     @State private var lines: [String]?
     @State private var searchText = ""

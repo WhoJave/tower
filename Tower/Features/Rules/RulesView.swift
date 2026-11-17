@@ -2,7 +2,7 @@ import SwiftUI
 import UIKit
 
 struct RulesView: View {
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isImportPresented = false
     @State private var pendingDeletion: RuleScheme?
@@ -50,7 +50,7 @@ struct RulesView: View {
                 .accessibilityIdentifier("import-rule-scheme")
             }
         }
-        .sensoryFeedback(.selection, trigger: model.selectedPresetID)
+        .towerSensoryFeedback(.selection, trigger: model.selectedPresetID)
         .sheet(isPresented: $isImportPresented) {
             ImportRuleSchemeSheet()
         }
@@ -456,7 +456,7 @@ private struct RuleSchemeCard: View {
         .transition(.opacity)
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("scheme-card-\(scheme.id)")
-        .sensoryFeedback(.selection, trigger: isExpanded)
+        .towerSensoryFeedback(.selection, trigger: isExpanded)
     }
 
     private func description(of group: RuleSchemeGroup) -> String {
@@ -474,7 +474,7 @@ private struct RuleSchemeCard: View {
 }
 
 private struct ImportedRuleSchemeEditor: View {
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     @Environment(\.dismiss) private var dismiss
     @State private var requestsDiscard = false
     let scheme: RuleScheme
@@ -604,7 +604,7 @@ private struct ReorderNotice {
 /// hand-written rules. Search is the primary path; raw syntax stays one level
 /// deeper for people who actually need it.
 private struct RuleCustomizationSheet: View {
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let scheme: RuleScheme
@@ -836,7 +836,7 @@ private struct RuleCustomizationSheet: View {
             .towerToast()
         }
         .presentationDetents([.large])
-        .onChange(of: groups.map(\.name)) { _, names in
+        .towerOnChange(of: groups.map(\.name)) { _, names in
             draftGroupOrder = names
         }
     }
@@ -1340,7 +1340,7 @@ private struct RuleCustomizationSheet: View {
 
 private struct RuleSchemeNetworkSettingsEditor: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     @Environment(\.dismiss) private var dismiss
     @State private var requestsDiscard = false
     let scheme: RuleScheme
@@ -1567,7 +1567,7 @@ private struct RuleSchemeNetworkSettingsEditor: View {
             .navigationBarTitleDisplayMode(.inline)
             .confirmDiscardChanges(hasChanges: draft != originalDraft, requested: $requestsDiscard)
             .scrollDismissesKeyboard(.interactively)
-            .sensoryFeedback(.selection, trigger: latencyTestPreset)
+            .towerSensoryFeedback(.selection, trigger: latencyTestPreset)
             .accessibilityIdentifier("rule-network-settings-editor")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -1675,7 +1675,7 @@ private struct RuleSchemeLatencyTestBrandLogoView: View {
 
 private struct RuleSchemeConfigurationEditor: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     @Environment(\.dismiss) private var dismiss
     @State private var requestsDiscard = false
     let scheme: RuleScheme
@@ -1804,7 +1804,7 @@ private struct RuleSchemeConfigurationEditor: View {
 /// as the initial/default policy, while still exposing every later member for
 /// manual switching after import.
 struct OrderedPolicyCandidateSections: View {
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     @Binding var selected: [String]
     let options: [String]
     let scheme: RuleScheme
@@ -1987,7 +1987,7 @@ enum RulePolicyPresentation {
 }
 
 private struct CatalogRuleRouteEditor: View {
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     @Environment(\.dismiss) private var dismiss
     @State private var requestsDiscard = false
     let scheme: RuleScheme
@@ -2108,7 +2108,7 @@ private struct LocalRuleSetEditor: View {
         case rules
     }
 
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     @Environment(\.dismiss) private var dismiss
     @State private var requestsDiscard = false
     @State private var didFocusName = false

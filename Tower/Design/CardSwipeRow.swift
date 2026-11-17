@@ -4,7 +4,7 @@ import UIKit
 /// A single, non-scrolling native row. Its parent supplies the card's intrinsic
 /// height; it does not need a SwiftUI List's diffing and self-sizing machinery.
 struct CardSwipeRow<Content: View>: UIViewRepresentable {
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     let content: Content
     let onDelete: () -> Void
 

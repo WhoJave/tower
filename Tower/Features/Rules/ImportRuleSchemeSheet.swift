@@ -22,7 +22,7 @@ struct ImportRuleSchemeSheet: View {
     }
     private enum Field { case url, text }
 
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var source: Source = .link
@@ -173,7 +173,7 @@ struct ImportRuleSchemeSheet: View {
                 }
             }
             .onAppear { focusedField = .url }
-            .onChange(of: source) { _, value in
+            .towerOnChange(of: source) { _, value in
                 clearImportError()
                 focusedField = value == .link ? .url : value == .text ? .text : nil
             }

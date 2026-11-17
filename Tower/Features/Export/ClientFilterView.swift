@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ClientFilterView: View {
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.scenePhase) private var scenePhase
     @Binding var isLANSharingSelected: Bool
@@ -117,7 +117,7 @@ struct ClientFilterView: View {
             .onAppear {
                 viewportHeight = viewport.size.height
             }
-            .onChange(of: viewport.size.height) { _, height in
+            .towerOnChange(of: viewport.size.height) { _, height in
                 viewportHeight = height
             }
             .onDisappear {
@@ -130,15 +130,15 @@ struct ClientFilterView: View {
         .navigationTitle("客户端筛选")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear(perform: synchronizeOrder)
-        .onChange(of: model.exportDestinationOrder) { _, destinations in
+        .towerOnChange(of: model.exportDestinationOrder) { _, destinations in
             guard dragSession == nil else { return }
             orderedDestinations = destinations
         }
-        .onChange(of: scenePhase) { _, phase in
+        .towerOnChange(of: scenePhase) { _, phase in
             guard phase != .active, dragSession != nil || settlingSession != nil else { return }
             resetDragState()
         }
-        .sensoryFeedback(.selection, trigger: interactionFeedback)
+        .towerSensoryFeedback(.selection, trigger: interactionFeedback)
     }
 
     private var displayedSection: some View {
@@ -153,7 +153,7 @@ struct ClientFilterView: View {
                     .contentTransition(
                         reduceMotion
                             ? .opacity
-                            : .numericText(value: Double(displayedDestinations.count))
+                            : .numericText()
                     )
             }
             .padding(.horizontal, 4)

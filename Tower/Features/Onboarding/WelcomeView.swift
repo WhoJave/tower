@@ -59,7 +59,7 @@ struct WelcomeView: View {
         .frame(maxHeight: TowerPlatform.isMac ? 760 : .infinity)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(TowerTheme.background.ignoresSafeArea())
-        .sensoryFeedback(.selection, trigger: page)
+        .towerSensoryFeedback(.selection, trigger: page)
     }
 
     private var journey: some View {
@@ -77,7 +77,7 @@ struct WelcomeView: View {
     private func journeyItem(_ title: LocalizedStringKey, symbol: String, step: Int) -> some View {
         HStack(spacing: 5) {
             Image(systemName: page > step ? "checkmark" : symbol)
-                .contentTransition(.symbolEffect(.replace))
+                .contentTransition(.opacity)
             Text(title).lineLimit(1).minimumScaleFactor(0.7)
         }
         .font(.caption.weight(.semibold))
@@ -1010,7 +1010,7 @@ private struct RoutingDiagram: View {
             Text(verbatim: lane.title).font(.caption.weight(.semibold))
             Text(verbatim: "\(count)")
                 .font(.caption2.weight(.bold).monospacedDigit())
-                .contentTransition(.numericText(value: Double(count)))
+                .contentTransition(.numericText())
                 .foregroundStyle(.white)
                 .frame(minWidth: 16, minHeight: 16)
                 .background(lane.tint, in: Circle())
@@ -1094,7 +1094,7 @@ private struct WelcomeExportExample: View {
                                 .foregroundStyle(.primary)
                             Image(systemName: client == target ? "checkmark.circle.fill" : "circle")
                                 .foregroundStyle(client == target ? Color.accentColor : Color.secondary.opacity(0.5))
-                                .contentTransition(.symbolEffect(.replace))
+                                .contentTransition(.opacity)
                         }
                         .padding(.vertical, 6).frame(maxWidth: .infinity, minHeight: 84)
                         .contentShape(Rectangle())
@@ -1135,7 +1135,7 @@ private struct WelcomeExportExample: View {
         }
         .coordinateSpace(.named(Self.space))
         .overlay { flight }
-        .sensoryFeedback(.selection, trigger: client)
+        .towerSensoryFeedback(.selection, trigger: client)
         .onChange(of: client) { deliveries += 1 }
         .task(id: isActive) {
             // Hand the first configuration over once the page has settled.
