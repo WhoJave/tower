@@ -1,6 +1,6 @@
 # Tower iOS 16 compatibility branch
 
-This document describes the compatibility work on `WhoJave/tower:ios16-compat`, based on the existing fork's `main` branch. It does not claim an Xcode build or a working IPA.
+This document describes the compatibility work on `WhoJave/tower:ios16-compat`, based on the existing fork's `main` branch. **The unsigned iPhone Debug target has compiled successfully under Xcode 26.3 in GitHub Actions; an installable, signed IPA and iOS 16 device tests have not been produced.** Verified CI: https://github.com/WhoJave/tower/actions/runs/43997885254 (commit `7545b330`).
 
 ## Changes so far
 
@@ -9,8 +9,9 @@ This document describes the compatibility work on `WhoJave/tower:ios16-compat`, 
 - Added `Tower/Design/TowerIOS16Compat.swift`: two-value `onChange` modifier and optional sensory-feedback fallback. iOS 17 keeps native haptic feedback; iOS 16 currently omits haptic effects.
 - Replaced iOS 17-only symbol content transitions with opacity and numerical text transitions using the iOS 16-compatible overload.
 - Updated source-oriented regression tests to recognize the compatibility wrappers.
+- Replaced additional unavailable APIs (empty states, navigation, gestures, onboarding keyframes and some animations) with iOS 16 fallbacks. Native iOS 17 effects are kept behind availability checks.
 
-## Build verification (must run on a Mac with a recent Xcode)
+## Local build and device verification
 
 From the repository root:
 
@@ -35,7 +36,7 @@ For a physical iOS 16.7.x iPhone, select the device in Xcode, provide your own d
 
 ## Known caveats
 
-1. **Not verified by Xcode or device tests** in the environment where this branch was prepared. A GitHub commit is not proof of a successful iOS 16 build.
+1. **iPhone unsigned build passed** on GitHub Actions with Xcode 26.3. There is no Apple code signing, no iOS 16 simulator test run and no iOS 16 device functional verification yet.
 2. `ObservableObject` invalidates more views than Observation's fine-grained tracking; profile with 1,000/5,000 nodes, particularly on older devices.
 3. On iOS 16, native swipe rows are always kept alive because geometry-based scroll viewport bounds need iOS 17; check scrolling performance on older iPhones.
 4. The backported two-value `onChange` uses a stateful modifier and can differ from iOS 17's timing on view identity changes. Validate sheet presentation and background transitions.
