@@ -96,7 +96,7 @@ final class NodeExportGroupCache {
 
 struct NodeFilterSections: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
 
     @Binding var searchText: String
     @Binding var showsNameFilter: Bool
@@ -165,7 +165,7 @@ struct NodeFilterSections: View {
                         // Scope motion to glyphs; a header transaction must not
                         // animate the List's row diff when search is dismissed.
                         .animation(TowerMotion.selection(reduceMotion: reduceMotion)) { content in
-                            content.contentTransition(reduceMotion ? .opacity : .numericText(value: Double(includedFilteredNodeCount)))
+                            content.contentTransition(reduceMotion ? .opacity : .numericText())
                         }
                     Spacer()
                     bulkSelectionButton(
@@ -410,7 +410,7 @@ struct NodeFilterSections: View {
 /// The same editor used by policy-group name rules, with a separate saved
 /// condition that controls which nodes reach every export destination.
 struct NodeExportNameFilterSheet: View {
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     @Environment(\.dismiss) private var dismiss
     @State private var pattern: String
     @State private var previewResult: NodeNameFilterPreviewResult?

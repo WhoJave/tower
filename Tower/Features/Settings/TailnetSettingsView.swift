@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Settings row that opens the tailnet list.
 struct TailnetSettingsRow: View {
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
 
     private var summary: String {
         let enabled = model.tailnets.filter(\.isEnabled).count
@@ -30,7 +30,7 @@ struct TailnetSettingsRow: View {
 }
 
 struct TailnetListView: View {
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     @State private var editing: TailnetEditorItem?
 
     var body: some View {
@@ -96,7 +96,7 @@ struct TailnetEditorItem: Identifiable {
 }
 
 private struct TailnetRow: View {
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     let connection: TailnetConnection
     let edit: () -> Void
 
@@ -147,7 +147,7 @@ private struct TailnetRow: View {
 }
 
 private struct TailnetEditorSheet: View {
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     @Environment(\.dismiss) private var dismiss
     let item: TailnetEditorItem
 

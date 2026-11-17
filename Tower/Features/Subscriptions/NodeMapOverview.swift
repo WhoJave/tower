@@ -42,7 +42,7 @@ struct NodeMapOverview<Header: View>: View, Equatable {
     // inside this view still delivers country/latency changes independently.
     static func == (lhs: Self, rhs: Self) -> Bool { lhs.nodes == rhs.nodes }
 
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.colorSchemeContrast) private var contrast
@@ -89,7 +89,7 @@ struct NodeMapOverview<Header: View>: View, Equatable {
             .id(SubscriptionScrollTarget.nodes)
             .accessibilityIdentifier("nodes-section")
         }
-        .sensoryFeedback(.selection, trigger: selectedRegionCode)
+        .towerSensoryFeedback(.selection, trigger: selectedRegionCode)
         .task(id: nodes) {
             await model.resolveIPCountries(for: nodes)
         }
@@ -116,18 +116,18 @@ struct NodeMapOverview<Header: View>: View, Equatable {
             presentation = prepared
             preparedRevision = revision
         }
-        .onChange(of: clusters.map(\.id)) { _, clusterIDs in
+        .towerOnChange(of: clusters.map(\.id)) { _, clusterIDs in
             // A collapsed list stays collapsed; only a selection that no longer
             // exists is cleared.
             guard let selectedRegionCode, !clusterIDs.contains(selectedRegionCode) else { return }
             self.selectedRegionCode = nil
         }
-        .onChange(of: isTestingAnyNode) { wasTesting, isTesting in
+        .towerOnChange(of: isTestingAnyNode) { wasTesting, isTesting in
             guard wasTesting, !isTesting else { return }
             if awaitsLatencyCompletion { latencyCompletionFeedback += 1 }
             awaitsLatencyCompletion = false
         }
-        .sensoryFeedback(.success, trigger: latencyCompletionFeedback)
+        .towerSensoryFeedback(.success, trigger: latencyCompletionFeedback)
     }
 
     private var isTestingAnyNode: Bool {
@@ -364,7 +364,7 @@ struct NodeMapOverview<Header: View>: View, Equatable {
 }
 
 private struct SelectedRegionNodes: View {
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     let cluster: NodeRegionCluster
     let onCollapse: () -> Void
 
@@ -438,7 +438,7 @@ private struct SelectedRegionNodes: View {
 }
 
 struct CompactNodeRow: View {
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     let node: ProxyNode
     let resolvesRegionOnAppear: Bool
     @State private var sharePayload: SharePayload?
@@ -518,7 +518,7 @@ struct CompactNodeRow: View {
 }
 
 struct ExpandableNodeRow: View {
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let node: ProxyNode
     let resolvesRegionOnAppear: Bool
@@ -674,7 +674,7 @@ struct ExpandableNodeRow: View {
         .sheet(isPresented: $showsCountryPicker) {
             NodeCountryPicker(node: node)
         }
-        .sensoryFeedback(.selection, trigger: isExpanded)
+        .towerSensoryFeedback(.selection, trigger: isExpanded)
         .sheet(item: $sharePayload) { payload in
             SharePayloadSheet(payload: payload)
         }
@@ -708,7 +708,7 @@ private struct NodeDisplayNameLabel: View {
 }
 
 private struct NodeRegionLogo: View {
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     @Environment(\.isSwipeSizingCopy) private var isSwipeSizingCopy
     let node: ProxyNode
     let resolvesRegionOnAppear: Bool
@@ -819,7 +819,7 @@ private struct CountryFlagEmoji: View {
 }
 
 private struct NodeLatencyBadge: View {
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let node: ProxyNode
     let showsUntestedState: Bool
@@ -852,7 +852,7 @@ private struct NodeLatencyBadge: View {
                         Text("\(milliseconds) ms")
                             .font(.caption.weight(.bold))
                             .foregroundStyle(latencyColor(milliseconds: milliseconds))
-                            .contentTransition(reduceMotion ? .opacity : .numericText(value: Double(milliseconds)))
+                            .contentTransition(reduceMotion ? .opacity : .numericText())
                         Text(measurement.method?.rawValue ?? "")
                             .font(.caption2)
                             .foregroundStyle(.secondary)

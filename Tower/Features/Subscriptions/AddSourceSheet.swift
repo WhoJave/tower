@@ -3,7 +3,7 @@ import UIKit
 
 struct AddSourceSheet: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @Environment(AppModel.self) private var model
+    @EnvironmentObject private var model: AppModel
     @Environment(\.dismiss) private var dismiss
     private let editingNode: ProxyNode?
     @State private var name = ""
@@ -311,7 +311,7 @@ struct AddSourceSheet: View {
                     .tag(kind)
                 }
             }
-            .onChange(of: manualDraft.kind) { _, selectedKind in
+            .towerOnChange(of: manualDraft.kind) { _, selectedKind in
                 manualDraft.applyDefaults(for: selectedKind)
             }
         }
