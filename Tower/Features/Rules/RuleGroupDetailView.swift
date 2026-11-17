@@ -102,7 +102,7 @@ struct RuleGroupDetailView: View {
                     .accessibilityIdentifier("rule-group-delete")
                 }
             } else {
-                ContentUnavailableView("策略组已删除", systemImage: "trash")
+                TowerUnavailableView("策略组已删除", systemImage: "trash")
                     .listRowBackground(Color.clear)
             }
         }
@@ -129,8 +129,13 @@ struct RuleGroupDetailView: View {
             }
             lineCounts = counts
         }
-        .navigationDestination(item: $openedSource) { source in
-            RulesetContentView(ruleset: source)
+        .navigationDestination(isPresented: Binding(
+            get: { openedSource != nil },
+            set: { if !$0 { openedSource = nil } }
+        )) {
+            if let source = openedSource {
+                RulesetContentView(ruleset: source)
+            }
         }
         .task(id: nodeFilterPreviewInput) {
             guard let input = nodeFilterPreviewInput else { return }
@@ -566,10 +571,10 @@ struct RulesetContentView: View {
             }
             if let lines {
                 if ruleset.isBinaryRuleSet {
-                    ContentUnavailableView("无法预览", systemImage: "doc.zipper", description: Text("这是 mihomo 的二进制规则集，只有对应客户端能读取。"))
+                    TowerUnavailableView("无法预览", systemImage: "doc.zipper", description: Text("这是 mihomo 的二进制规则集，只有对应客户端能读取。"))
                         .listRowBackground(Color.clear)
                 } else if lines.isEmpty {
-                    ContentUnavailableView("规则列表还没下载到本机", systemImage: "icloud.and.arrow.down", description: Text("回到规则页刷新这个方案后即可查看。"))
+                    TowerUnavailableView("规则列表还没下载到本机", systemImage: "icloud.and.arrow.down", description: Text("回到规则页刷新这个方案后即可查看。"))
                         .listRowBackground(Color.clear)
                 } else {
                     Section {
@@ -578,7 +583,7 @@ struct RulesetContentView: View {
                             .listRowBackground(Color.clear)
                     }
                     if visibleLines.isEmpty {
-                        ContentUnavailableView.search(text: searchText)
+                        TowerUnavailableView("没有匹配的规则", systemImage: "magnifyingglass")
                             .listRowBackground(Color.clear)
                     } else {
                         Section {

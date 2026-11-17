@@ -39,7 +39,7 @@ struct CardSwipeRow<Content: View>: UIViewRepresentable {
         let environment = context.environment
         coordinator.configuration = UIHostingConfiguration {
             content
-                .environment(model)
+                .environmentObject(model)
                 .environment(\.colorScheme, environment.colorScheme)
                 .environment(\.dynamicTypeSize, environment.dynamicTypeSize)
                 .environment(\.layoutDirection, environment.layoutDirection)

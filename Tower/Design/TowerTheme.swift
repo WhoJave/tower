@@ -457,7 +457,7 @@ struct CheckmarkToggleStyle: ToggleStyle {
                 .contentShape(Rectangle())
         }
         .buttonStyle(SelectionIndicatorButtonStyle())
-        .accessibilityAddTraits(.isToggle)
+        .accessibilityValue(configuration.isOn ? "已选中" : "未选中")
         // Every other choice in the app taps back — the tab bar, the rule
         // list, the client picker. This one was the exception.
         .towerSensoryFeedback(.selection, trigger: configuration.isOn) { _, _ in !isSwipeSizingCopy }

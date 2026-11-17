@@ -852,7 +852,7 @@ struct LANSharingDestinationCard: View {
             // Keep the button's changing position outside its press animation.
             // Otherwise removing the link panel sends the label through the
             // key action while the rest of the card has already collapsed.
-            .geometryGroup()
+            .towerGeometryGroup()
             .disabled(model.isLANSharingStarting)
             .accessibilityIdentifier("lan-sharing-toggle")
 

@@ -451,7 +451,7 @@ private struct RuleSchemeCard: View {
         // said the same thing twice.
         .towerCard()
         // As in SubscriptionCard, background and text share one moving frame.
-        .geometryGroup()
+        .towerGeometryGroup()
         .contentShape(RoundedRectangle(cornerRadius: TowerTheme.cornerRadius))
         .transition(.opacity)
         .accessibilityElement(children: .contain)
@@ -708,7 +708,7 @@ private struct RuleCustomizationSheet: View {
                         } label: {
                             Label(model.ruleGroupEmojisAreEnabled(for: scheme) ? "隐藏 Emoji" : "显示 Emoji", systemImage: "face.smiling")
                         }
-                        .menuActionDismissBehavior(.enabled)
+                        .towerMenuActionDismissBehavior(keepOpen: false)
                         // Imported schemes only: the bundled ones all carry emoji.
                         if !scheme.isBundled, model.ruleGroupEmojisAreEnabled(for: scheme) {
                             Button {
@@ -717,7 +717,7 @@ private struct RuleCustomizationSheet: View {
                                 Label(model.ruleGroupEmojiAutofillEnabled(for: scheme) ? "不再自动补全 Emoji" : "自动补全 Emoji",
                                       systemImage: "wand.and.stars")
                             }
-                            .menuActionDismissBehavior(.enabled)
+                            .towerMenuActionDismissBehavior(keepOpen: false)
                         }
                         Button {
                             networkSettingsEditor = model.customizableScheme(for: scheme)
@@ -754,7 +754,7 @@ private struct RuleCustomizationSheet: View {
             }
             .sheet(item: $manualEditor) { request in
                 LocalRuleSetEditor(ruleSet: request.ruleSet)
-                    .environment(model)
+                    .environmentObject(model)
             }
             .sheet(item: $catalogEditor) { request in
                 CatalogRuleRouteEditor(scheme: request.scheme, flow: request.flow)
@@ -903,7 +903,7 @@ private struct RuleCustomizationSheet: View {
         }
 
         if visibleCatalogEntries.isEmpty {
-            ContentUnavailableView.search(text: trimmedSearch)
+            TowerUnavailableView("没有匹配的规则", systemImage: "magnifyingglass")
                 .listRowBackground(Color.clear)
         } else {
             Section {
@@ -1884,7 +1884,7 @@ struct OrderedPolicyCandidateSections: View {
                         }
                     }
                 }
-                .environment(model)
+                .environmentObject(model)
                 .presentationDetents([.medium, .large])
             }
         } header: {

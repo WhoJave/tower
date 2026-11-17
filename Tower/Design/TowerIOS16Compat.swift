@@ -39,6 +39,16 @@ struct TowerUnavailableView: View {
 
 extension View {
     @ViewBuilder
+    func towerScrollBounceBehavior() -> some View {
+        if #available(iOS 16.4, *) {
+            self.scrollBounceBehavior(.basedOnSize)
+        } else {
+            self
+        }
+    }
+
+
+    @ViewBuilder
     func towerGeometryGroup() -> some View {
         if #available(iOS 17.0, *) {
             self.geometryGroup()

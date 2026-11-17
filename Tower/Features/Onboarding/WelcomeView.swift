@@ -262,7 +262,7 @@ private struct WelcomePageContent: View {
             }
             .padding(.horizontal, 26).padding(.bottom, 24)
         }
-        .scrollBounceBehavior(.basedOnSize)
+        .towerScrollBounceBehavior()
     }
 
     private var introductionHeading: some View {
@@ -331,7 +331,11 @@ private struct WelcomeSceneLoop<Phase: Equatable, Content: View>: View {
         if reduceMotion {
             content(finished)
         } else if isActive {
-            PhaseAnimator(phases, content: content, animation: animation)
+            if #available(iOS 17.0, *) {
+                PhaseAnimator(phases, content: content, animation: animation)
+            } else {
+                content(finished)
+            }
         } else {
             content(phases[0])
         }
@@ -1133,7 +1137,7 @@ private struct WelcomeExportExample: View {
             }
             .padding(18).towerCard()
         }
-        .coordinateSpace(.named(Self.space))
+        .coordinateSpace(name: Self.space)
         .overlay { flight }
         .towerSensoryFeedback(.selection, trigger: client)
         .towerOnChange(of: client) { deliveries += 1 }
@@ -1168,7 +1172,7 @@ private struct WelcomeExportExample: View {
             .clipShape(RoundedRectangle(cornerRadius: 8))
         if reduceMotion {
             icon
-        } else {
+        } else if #available(iOS 17.0, *) {
             KeyframeAnimator(initialValue: ReceiverFrame(), trigger: deliveries) { frame in
                 icon
                     .opacity(frame.opacity)
@@ -1185,6 +1189,8 @@ private struct WelcomeExportExample: View {
                     SpringKeyframe(1, duration: 0.35, spring: .bouncy)
                 }
             }
+        } else {
+            icon
         }
     }
 
@@ -1192,7 +1198,7 @@ private struct WelcomeExportExample: View {
     /// button, shrinking to the button's icon size on the way: choosing a
     /// client is what sets where the configuration goes.
     @ViewBuilder private var flight: some View {
-        if !reduceMotion, let start = tileIconFrames[client.id], receiverFrame != .zero {
+        if #available(iOS 17.0, *), !reduceMotion, let start = tileIconFrames[client.id], receiverFrame != .zero {
             let end = receiverFrame
             KeyframeAnimator(initialValue: FlightFrame(), trigger: deliveries) { frame in
                 let t = frame.progress
